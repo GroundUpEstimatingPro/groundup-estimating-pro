@@ -1,204 +1,789 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GroundUp Estimating Pro</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GroundUp Estimating Pro</title>
+  <style>
+    :root {
+      --brand: #2f62f5;
+      --brand-2: #6aa3ff;
+      --ink: #10203d;
+      --muted: #60708e;
+      --line: rgba(16, 32, 61, 0.08);
+      --soft: #eef4ff;
+      --card: rgba(255,255,255,0.94);
+      --panel: #0f1d38;
+      --success: #0f9d6a;
+      --warning: #d78800;
+      --danger: #d64045;
+      --shadow: 0 20px 60px rgba(47,98,245,0.12);
+    }
 
-<style>
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
 
-body{
-font-family: Inter, Arial;
-margin:0;
-background:#eef2f7;
-color:#1a1a1a;
-}
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(47,98,245,0.14), transparent 28%),
+        radial-gradient(circle at top right, rgba(106,163,255,0.12), transparent 22%),
+        linear-gradient(180deg, #f7faff 0%, #edf3ff 100%);
+    }
 
-header{
-background:linear-gradient(90deg,#1b4dff,#4a74ff);
-color:white;
-padding:60px;
-text-align:center;
-}
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.86);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(10px);
+    }
 
-h1{
-margin:0;
-font-size:42px;
-}
+    .topbar-inner {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 0.9rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
 
-.subtitle{
-opacity:.9;
-margin-top:10px;
-}
+    .brand {
+      font-weight: 700;
+      font-size: 1rem;
+    }
 
-.container{
-max-width:1200px;
-margin:auto;
-padding:60px 20px;
-}
+    .topnav {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
 
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-gap:25px;
-}
+    .topnav a {
+      text-decoration: none;
+      color: var(--brand);
+      font-size: 0.9rem;
+    }
 
-.card{
-background:white;
-padding:30px;
-border-radius:12px;
-box-shadow:0 10px 25px rgba(0,0,0,.06);
-}
+    .topnav .btn {
+      background: #1696c4;
+      color: white;
+      padding: 0.55rem 0.9rem;
+      border-radius: 8px;
+    }
 
-.card h3{
-margin-top:0;
-}
+    .container {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 1rem 1rem 3rem;
+    }
 
-.section-title{
-font-size:28px;
-margin-bottom:30px;
-}
+    .app-shell {
+      display: grid;
+      grid-template-columns: 290px 1fr;
+      gap: 1.25rem;
+      align-items: start;
+    }
 
-.dashboard{
-background:white;
-padding:40px;
-border-radius:16px;
-box-shadow:0 15px 35px rgba(0,0,0,.08);
-margin-top:50px;
-}
+    .sidebar, .surface, .metric, .stat, .task, .file-card, .table-wrap, .activity, .note-card, .project-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: 0 12px 28px rgba(16,32,61,0.05);
+    }
 
-.pipeline{
-display:flex;
-gap:20px;
-margin-top:20px;
-}
+    .sidebar {
+      position: sticky;
+      top: 5rem;
+      padding: 1rem;
+    }
 
-.status{
-flex:1;
-background:#f5f7fb;
-padding:20px;
-border-radius:10px;
-}
+    .brand-box {
+      padding: 1rem;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #1a3a8a, #2f62f5 62%, #6aa3ff);
+      color: white;
+      box-shadow: var(--shadow);
+      margin-bottom: 1rem;
+    }
 
-button{
-background:#1b4dff;
-color:white;
-border:none;
-padding:12px 22px;
-border-radius:8px;
-cursor:pointer;
-font-weight:600;
-}
+    .brand-box h3,
+    .brand-box p {
+      color: white;
+      margin-top: 0;
+    }
 
-.cta{
-text-align:center;
-margin-top:60px;
-}
+    .menu a {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      text-decoration: none;
+      color: var(--ink);
+      padding: 0.85rem 1rem;
+      border-radius: 16px;
+      margin-bottom: 0.45rem;
+      font-weight: 600;
+    }
 
-footer{
-margin-top:80px;
-padding:40px;
-text-align:center;
-background:#111;
-color:white;
-}
+    .menu a.active,
+    .menu a:hover {
+      background: var(--soft);
+      color: var(--brand);
+    }
 
-</style>
+    .pill {
+      display: inline-block;
+      padding: 0.3rem 0.7rem;
+      border-radius: 999px;
+      background: var(--soft);
+      color: var(--brand);
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
 
+    .pill-light {
+      background: rgba(255,255,255,.14);
+      color: white;
+    }
+
+    .content {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .surface {
+      padding: 1.2rem;
+    }
+
+    .hero-grid,
+    .metrics-grid,
+    .project-grid,
+    .workspace-grid,
+    .estimate-grid,
+    .double-grid,
+    .triple-grid,
+    .action-grid {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .hero-grid { grid-template-columns: 1.2fr 0.8fr; }
+    .metrics-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .project-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .workspace-grid { grid-template-columns: 1.1fr 0.9fr; }
+    .estimate-grid { grid-template-columns: 1fr 1fr; }
+    .double-grid { grid-template-columns: 1fr 1fr; }
+    .triple-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .action-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+
+    .hero-card {
+      background: linear-gradient(135deg, #11234a 0%, #224cbf 55%, #6aa3ff 100%);
+      color: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card h1,
+    .hero-card p {
+      color: white;
+      margin-top: 0;
+    }
+
+    .hero-sub {
+      font-size: 1.1rem;
+      opacity: 0.95;
+    }
+
+    .hero-actions,
+    .action-row,
+    .tag-row,
+    .tab-row {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+      display: inline-block;
+      text-decoration: none;
+      border-radius: 12px;
+      padding: 0.8rem 1rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: #1696c4;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #5a6b7b;
+      color: white;
+    }
+
+    .metric, .stat, .task, .file-card, .activity, .note-card, .project-card {
+      padding: 1rem;
+    }
+
+    .metric strong,
+    .stat strong {
+      font-size: 1.35rem;
+      color: var(--brand);
+      display: block;
+    }
+
+    .dark-panel {
+      background: var(--panel);
+      color: white;
+      border-radius: 24px;
+      padding: 1.1rem;
+      box-shadow: var(--shadow);
+    }
+
+    .dark-panel h3,
+    .dark-panel p,
+    .dark-panel li {
+      color: white;
+      margin-top: 0;
+    }
+
+    .row-between {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .mini {
+      color: var(--muted);
+      font-size: 0.93rem;
+    }
+
+    .tag {
+      border-radius: 999px;
+      padding: 0.25rem 0.6rem;
+      background: #f3f6fb;
+      border: 1px solid rgba(16,32,61,0.06);
+      font-size: 0.8rem;
+    }
+
+    .status-green { color: var(--success); font-weight: 700; }
+    .status-yellow { color: var(--warning); font-weight: 700; }
+    .status-red { color: var(--danger); font-weight: 700; }
+
+    .upload-box {
+      padding: 1.25rem;
+      border-radius: 20px;
+      border: 2px dashed rgba(47,98,245,0.34);
+      background: linear-gradient(180deg, #f9fbff, #eef4ff);
+      text-align: center;
+    }
+
+    .progress {
+      height: 10px;
+      border-radius: 999px;
+      background: #dbe7ff;
+      overflow: hidden;
+      margin-top: 0.65rem;
+    }
+
+    .progress span {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, var(--brand), var(--brand-2));
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 1rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 18px;
+      overflow: hidden;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 0.85rem;
+      border-bottom: 1px solid rgba(16,32,61,0.08);
+      vertical-align: top;
+    }
+
+    .right {
+      text-align: right;
+    }
+
+    .action-tile {
+      border-radius: 18px;
+      padding: 0.9rem;
+      background: #f7faff;
+      border: 1px solid rgba(47,98,245,0.1);
+      min-height: 108px;
+    }
+
+    .chat-box {
+      background: #f8fbff;
+      border: 1px solid rgba(16,32,61,0.08);
+      border-radius: 18px;
+      padding: 1rem;
+    }
+
+    .chat-msg {
+      padding: 0.85rem 1rem;
+      border-radius: 16px;
+      margin-bottom: 0.8rem;
+      max-width: 92%;
+    }
+
+    .chat-user { background: #ecf3ff; margin-left: auto; }
+    .chat-ai { background: white; border: 1px solid rgba(16,32,61,0.08); }
+
+    .clean-list {
+      padding-left: 1.1rem;
+      margin-bottom: 0;
+    }
+
+    .active-tab {
+      background: var(--soft);
+      color: var(--brand);
+      border-radius: 999px;
+      padding: 0.45rem 0.8rem;
+    }
+
+    .tab-row span:not(.active-tab) {
+      padding: 0.45rem 0.8rem;
+      border-radius: 999px;
+      background: #f3f6fd;
+      border: 1px solid rgba(16,32,61,0.08);
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    h2, h3 { margin-bottom: 0.35rem; }
+
+    @media (max-width: 1180px) {
+      .app-shell,
+      .hero-grid,
+      .workspace-grid,
+      .estimate-grid,
+      .double-grid,
+      .triple-grid,
+      .metrics-grid,
+      .project-grid,
+      .action-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+      }
+    }
+  </style>
 </head>
-
 <body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">GroundUp Estimating Pro</div>
+      <div class="topnav">
+        <a href="#dashboard">Dashboard</a>
+        <a href="#workspace">Workspace</a>
+        <a href="#estimate">Estimate Builder</a>
+        <a class="btn" href="#access">Request Access</a>
+      </div>
+    </div>
+  </div>
 
-<header>
+  <main class="container">
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand-box">
+          <div class="pill pill-light">Cloud Platform</div>
+          <h3>GroundUp OS</h3>
+          <p>Estimator-first workspace for project intake, scope review, estimates, RFIs, and proposals.</p>
+        </div>
 
-<h1>GroundUp Estimating Pro</h1>
-<p class="subtitle">
-AI-powered estimating platform for electrical, civil & utility infrastructure construction
-</p>
+        <nav class="menu">
+          <a class="active" href="#dashboard"><span>Overview</span><span>01</span></a>
+          <a href="#projects"><span>Projects</span><span>12</span></a>
+          <a href="#workspace"><span>Project Workspace</span><span>Live</span></a>
+          <a href="#estimate"><span>Estimate Builder</span><span>New</span></a>
+          <a href="#rfis"><span>RFI Manager</span><span>6</span></a>
+          <a href="#proposal"><span>Proposal Builder</span><span>2</span></a>
+          <a href="#ai"><span>AI Actions</span><span>5</span></a>
+          <a href="#admin"><span>Admin / Metrics</span><span>Beta</span></a>
+        </nav>
 
-</header>
+        <div class="note-card">
+          <div class="row-between">
+            <strong>Internal mode</strong>
+            <span class="status-green">Active</span>
+          </div>
+          <p class="mini">Use internally first, refine workflows, then expand into contractor SaaS.</p>
+        </div>
+      </aside>
 
-<div class="container">
+      <section class="content">
+        <section class="surface" id="dashboard">
+          <div class="hero-grid">
+            <article class="hero-card">
+              <div class="pill pill-light">Estimator Dashboard</div>
+              <h1>Run real projects through a cloud-based estimating workspace.</h1>
+              <p class="hero-sub">From uploaded plans to cost breakdowns, RFIs, and proposals.</p>
+              <p>
+                This interface is designed as a realistic estimating software platform with project records,
+                AI actions, editable estimates, and collaboration-ready outputs.
+              </p>
 
-<h2 class="section-title">Platform Capabilities</h2>
+              <div class="hero-actions">
+                <a class="btn-primary" href="#projects">Create Project</a>
+                <a class="btn-secondary" href="#workspace">Upload Plans</a>
+                <a class="btn-secondary" href="#ai">Run AI Review</a>
+              </div>
+            </article>
 
-<div class="grid">
+            <article class="dark-panel">
+              <h3>Today’s pipeline</h3>
 
-<div class="card">
-<h3>Estimate Builder</h3>
-<p>Create ROM, budget, and detailed bid estimates with AI-assisted scope review and automated cost calculations.</p>
-</div>
+              <div style="display:grid; gap:0.9rem;">
+                <div class="task">
+                  <div class="row-between">
+                    <strong>Utility Substation Upgrade</strong>
+                    <span class="status-yellow">In Review</span>
+                  </div>
+                  <p class="mini">Bid due in 4 days · Detailed estimate</p>
+                </div>
 
-<div class="card">
-<h3>AI Scope Analysis</h3>
-<p>Upload plans and specifications. The system identifies missing scope, risks, and constructability issues.</p>
-</div>
+                <div class="task">
+                  <div class="row-between">
+                    <strong>Municipal Waterline Extension</strong>
+                    <span class="status-green">Estimate Ready</span>
+                  </div>
+                  <p class="mini">Proposal draft available · 3 RFIs open</p>
+                </div>
 
-<div class="card">
-<h3>RFI Generator</h3>
-<p>Automatically draft RFIs when plan conflicts or missing information are detected.</p>
-</div>
+                <div class="task">
+                  <div class="row-between">
+                    <strong>Industrial Power Upgrade</strong>
+                    <span class="status-red">Missing Data</span>
+                  </div>
+                  <p class="mini">Spec gaps detected in feeder routing package</p>
+                </div>
+              </div>
+            </article>
+          </div>
 
-<div class="card">
-<h3>Proposal Builder</h3>
-<p>Generate professional client proposals including inclusions, exclusions, assumptions, and pricing summaries.</p>
-</div>
+          <div class="metrics-grid" style="margin-top:1rem;">
+            <article class="metric"><strong>18</strong><span class="mini">Active projects</span></article>
+            <article class="metric"><strong>$14.2M</strong><span class="mini">Bid volume in pipeline</span></article>
+            <article class="metric"><strong>43</strong><span class="mini">RFIs generated this month</span></article>
+            <article class="metric"><strong>68%</strong><span class="mini">Workflows completed with AI assistance</span></article>
+          </div>
+        </section>
 
-</div>
+        <section class="surface" id="projects">
+          <div class="section-head">
+            <div>
+              <div class="pill">Projects</div>
+              <h2>Bid calendar and project list</h2>
+              <p class="mini">Track active estimates, bid dates, trade type, and project readiness.</p>
+            </div>
+            <div class="action-row">
+              <a class="btn-primary" href="#workspace">Create Project</a>
+              <a class="btn-secondary" href="#admin">Import Historical Job</a>
+            </div>
+          </div>
 
-<div class="dashboard">
+          <div class="project-grid">
+            <article class="project-card">
+              <div class="row-between">
+                <strong>Utility Substation Upgrade</strong>
+                <span class="status-yellow">Reviewing</span>
+              </div>
+              <p class="mini">Electrical · Detailed estimate · Bid due Apr 22</p>
+              <div class="tag-row">
+                <span class="tag">12 files</span>
+                <span class="tag">6 RFIs</span>
+                <span class="tag">Proposal draft</span>
+              </div>
+              <div class="progress"><span style="width:74%"></span></div>
+            </article>
 
-<h2>Estimator Workspace</h2>
+            <article class="project-card">
+              <div class="row-between">
+                <strong>Municipal Waterline Extension</strong>
+                <span class="status-green">Ready</span>
+              </div>
+              <p class="mini">Civil · Budget estimate · Bid due Apr 26</p>
+              <div class="tag-row">
+                <span class="tag">8 files</span>
+                <span class="tag">2 addenda</span>
+                <span class="tag">Client pricing</span>
+              </div>
+              <div class="progress"><span style="width:92%"></span></div>
+            </article>
 
-<p>
-Run real projects through a cloud-based estimating environment.
-Upload drawings, generate estimates, and produce client proposals.
-</p>
+            <article class="project-card">
+              <div class="row-between">
+                <strong>Industrial Power Upgrade</strong>
+                <span class="status-red">Blocked</span>
+              </div>
+              <p class="mini">Utility · ROM estimate · Missing design details</p>
+              <div class="tag-row">
+                <span class="tag">4 files</span>
+                <span class="tag">Spec conflicts</span>
+                <span class="tag">Awaiting clarifications</span>
+              </div>
+              <div class="progress"><span style="width:41%"></span></div>
+            </article>
+          </div>
+        </section>
 
-<div class="pipeline">
+        <section class="surface" id="workspace">
+          <div class="section-head">
+            <div>
+              <div class="pill">Project Workspace</div>
+              <h2>Utility Substation Upgrade</h2>
+              <p class="mini">Client: Northern Grid Energy · Trade: Electrical / Utility · Estimate type: Detailed</p>
+              <div class="tab-row">
+                <span class="active-tab">Overview</span>
+                <span>Documents</span>
+                <span>Scope Review</span>
+                <span>Estimate</span>
+                <span>RFIs</span>
+                <span>Proposal</span>
+                <span>Activity</span>
+              </div>
+            </div>
+            <div class="action-row">
+              <a class="btn-primary" href="#ai">Run AI Analysis</a>
+              <a class="btn-secondary" href="#access">Share Project</a>
+            </div>
+          </div>
 
-<div class="status">
-<h4>Upload Plans</h4>
-<p>PDF drawings, specs, and addenda.</p>
-</div>
+          <div class="workspace-grid">
+            <section>
+              <article class="upload-box">
+                <h3>Upload plans, specs, addenda, and bid notes</h3>
+                <p class="mini">Drag in PDFs, drawing sets, marked-up sheets, subcontractor quotes, and owner instructions.</p>
+                <a class="btn-primary" href="#access">Upload project files</a>
+              </article>
 
-<div class="status">
-<h4>AI Scope Review</h4>
-<p>Identify scope items and risk areas.</p>
-</div>
+              <div class="triple-grid" style="margin-top:1rem;">
+                <article class="file-card">
+                  <div class="row-between"><strong>Drawing Set E-Series</strong><span class="tag">PDF</span></div>
+                  <p class="mini">18 sheets · Uploaded today</p>
+                </article>
+                <article class="file-card">
+                  <div class="row-between"><strong>Technical Specifications</strong><span class="tag">PDF</span></div>
+                  <p class="mini">Division 26 + utility notes</p>
+                </article>
+                <article class="file-card">
+                  <div class="row-between"><strong>Addendum 02</strong><span class="tag">PDF</span></div>
+                  <p class="mini">Equipment revisions flagged</p>
+                </article>
+              </div>
 
-<div class="status">
-<h4>Generate Estimate</h4>
-<p>Labor, materials, and pricing.</p>
-</div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>AI Output</th>
+                      <th>Status</th>
+                      <th>Last Run</th>
+                      <th>Owner</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>Document Review</td><td class="status-green">Complete</td><td>11:08 AM</td><td>GroundUp AI</td></tr>
+                    <tr><td>Scope Identification</td><td class="status-green">Complete</td><td>11:11 AM</td><td>GroundUp AI</td></tr>
+                    <tr><td>Detailed Estimate</td><td class="status-yellow">Needs Review</td><td>11:24 AM</td><td>Estimator</td></tr>
+                    <tr><td>RFI Draft Set</td><td class="status-green">Ready</td><td>11:31 AM</td><td>GroundUp AI</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
 
-<div class="status">
-<h4>Deliver Proposal</h4>
-<p>Export professional client proposal.</p>
-</div>
+            <aside class="dark-panel">
+              <h3>Project intelligence summary</h3>
+              <ul class="clean-list">
+                <li>Primary scope includes conduit banks, feeder runs, cable pulling, terminations, and support equipment.</li>
+                <li>6 risk flags detected around trench depth, pad responsibility, and equipment revision timing.</li>
+                <li>Utility coordination assumptions required for two feeder crossings.</li>
+                <li>Proposal language is ready after estimator review of exclusions.</li>
+              </ul>
+              <div class="progress"><span style="width:84%"></span></div>
+              <p class="mini" style="margin-top:.8rem;">Confidence score improves as files, clarifications, and historical job references are added.</p>
+            </aside>
+          </div>
+        </section>
 
-</div>
+        <section class="surface" id="ai">
+          <div class="pill">AI Actions</div>
+          <h2>GroundUp workflow engine</h2>
+          <p class="mini">Button-driven actions make the product feel like real estimating software instead of a generic chatbot.</p>
 
-</div>
+          <div class="action-grid">
+            <article class="action-tile"><strong>Analyze Documents</strong><p class="mini">Summarize project files, detect key scope, and identify missing info.</p></article>
+            <article class="action-tile"><strong>Identify Scope</strong><p class="mini">Build included scope, exclusions, assumptions, and conflicts.</p></article>
+            <article class="action-tile"><strong>Create Estimate</strong><p class="mini">Generate labor, materials, equipment, markup, and contingency.</p></article>
+            <article class="action-tile"><strong>Generate RFIs</strong><p class="mini">Draft clarifications tied to drawing and spec references.</p></article>
+            <article class="action-tile"><strong>Create Proposal</strong><p class="mini">Write client-ready scope summary, exclusions, and pricing narrative.</p></article>
+          </div>
+        </section>
 
-<div class="cta">
+        <section class="surface" id="estimate">
+          <div class="section-head">
+            <div>
+              <div class="pill">Estimate Builder</div>
+              <h2>Editable cost breakdown</h2>
+              <p class="mini">AI generates the first draft. Estimators review, adjust, and finalize before submission.</p>
+            </div>
+            <div class="action-row">
+              <a class="btn-primary" href="#access">Generate Estimate</a>
+              <a class="btn-secondary" href="#access">Save Version</a>
+              <a class="btn-secondary" href="#access">Export PDF</a>
+            </div>
+          </div>
 
-<h2>Request Early Platform Access</h2>
+          <div class="estimate-grid">
+            <section class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th>Cost Category</th><th>Description</th><th class="right">Amount</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>Labor</td><td>Electrical crew installation and terminations</td><td class="right">$428,500</td></tr>
+                  <tr><td>Materials</td><td>Conduit, cable, fittings, supports</td><td class="right">$912,000</td></tr>
+                  <tr><td>Equipment</td><td>Trenching support, lifts, pull equipment</td><td class="right">$146,000</td></tr>
+                  <tr><td>Subcontractors</td><td>Testing, traffic control, specialty support</td><td class="right">$98,000</td></tr>
+                  <tr><td>Overhead</td><td>Project management and supervision</td><td class="right">$73,500</td></tr>
+                  <tr><td>Markup</td><td>Commercial margin</td><td class="right">$112,000</td></tr>
+                  <tr><td>Contingency</td><td>Design uncertainty and coordination risk</td><td class="right">$90,000</td></tr>
+                  <tr><td><strong>Total</strong></td><td><strong>Detailed estimate total</strong></td><td class="right"><strong>$1,860,000</strong></td></tr>
+                </tbody>
+              </table>
+            </section>
 
-<p>Join contractors testing the GroundUp Estimating Pro platform.</p>
+            <section>
+              <article class="stat">
+                <strong>3,420 hrs</strong>
+                <span class="mini">Estimated labor hours across conduit, cable, terminations, and commissioning support.</span>
+              </article>
+              <article class="stat" style="margin-top:1rem;">
+                <strong>6 risk flags</strong>
+                <span class="mini">Open issues tied to trench depth, duct bank responsibility, equipment revisions, and schedule sequencing.</span>
+              </article>
+              <article class="stat" style="margin-top:1rem;">
+                <strong>Estimator notes</strong>
+                <p class="mini">Night work excluded. Civil by others unless noted. Utility outage windows assumed limited to one mobilization.</p>
+              </article>
+            </section>
+          </div>
+        </section>
 
-<button>Request Access</button>
+        <section class="surface" id="rfis">
+          <div class="pill">RFI Manager</div>
+          <h2>Clarification tracking</h2>
+          <p class="mini">AI drafts RFIs, then estimators edit and send them as part of pre-bid coordination.</p>
 
-</div>
+          <div class="double-grid">
+            <section class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th>RFI</th><th>Reference</th><th>Status</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>Confirm trench depth and backfill requirements at south feeder crossing.</td><td>Sheet E-14 / Civil Note 5</td><td class="status-yellow">Draft</td></tr>
+                  <tr><td>Clarify whether equipment pads are by electrical or civil contractor.</td><td>Spec 26 05 00</td><td class="status-green">Ready</td></tr>
+                  <tr><td>Confirm revised transformer lead times align with bid schedule.</td><td>Addendum 02</td><td class="status-yellow">Review</td></tr>
+                </tbody>
+              </table>
+            </section>
 
-</div>
+            <section class="activity">
+              <h3>Selected RFI preview</h3>
+              <p><strong>Question:</strong> Please confirm trench depth and backfill requirements for feeder routing shown near structure S-4.</p>
+              <p><strong>Reason:</strong> Civil and electrical documents appear inconsistent, which impacts trenching assumptions and quantity takeoff.</p>
+              <p><strong>Potential impact:</strong> Material quantities, excavation cost, labor hours, and contingency.</p>
+              <a class="btn-primary" href="#access">Approve and Send</a>
+            </section>
+          </div>
+        </section>
 
-<footer>
+        <section class="surface" id="proposal">
+          <div class="pill">Proposal Builder</div>
+          <h2>Client-ready proposal drafting</h2>
+          <p class="mini">Turn estimate logic into polished language with inclusions, exclusions, assumptions, and pricing summary.</p>
 
-GroundUp Estimating Pro © 2026
+          <div class="double-grid">
+            <section class="chat-box">
+              <div class="chat-msg chat-ai"><strong>GroundUp AI</strong><br>Drafted proposal summary for Utility Substation Upgrade based on current estimate, scope review, and exclusions.</div>
+              <div class="chat-msg chat-user"><strong>Estimator</strong><br>Tighten exclusions around night work and clarify civil by others.</div>
+              <div class="chat-msg chat-ai"><strong>GroundUp AI</strong><br>Updated proposal draft with explicit exclusion language and utility outage assumption notes.</div>
+            </section>
 
-</footer>
+            <section class="activity">
+              <h3>Proposal contents</h3>
+              <ul class="clean-list">
+                <li>Proposal summary and client introduction</li>
+                <li>Scope of work narrative</li>
+                <li>Inclusions and exclusions</li>
+                <li>Assumptions and clarifications</li>
+                <li>Pricing summary and commercial notes</li>
+              </ul>
+              <div class="action-row" style="margin-top:1rem;">
+                <a class="btn-primary" href="#access">Create Proposal</a>
+                <a class="btn-secondary" href="#access">Export PDF</a>
+                <a class="btn-secondary" href="#access">Export DOCX</a>
+              </div>
+            </section>
+          </div>
+        </section>
 
+        <section class="surface" id="admin">
+          <div class="pill">Admin + Growth View</div>
+          <h2>Cloud SaaS readiness</h2>
+          <p class="mini">The same platform can run internally now and expand into contractor SaaS later.</p>
+
+          <div class="triple-grid">
+            <article class="note-card"><strong>Internal tool today</strong><p class="mini">Use the workspace for your own estimating jobs, refine prompts, and improve reliability with real project data.</p></article>
+            <article class="note-card"><strong>Multi-user SaaS next</strong><p class="mini">Add organization accounts, subscription billing, permissions, and customer workspaces.</p></article>
+            <article class="note-card"><strong>Cloud architecture</strong><p class="mini">Recommended stack: Next.js, Supabase, storage, auth, and OpenAI API-based workflow engine.</p></article>
+          </div>
+        </section>
+
+        <section class="surface" id="access">
+          <h2>Request platform access</h2>
+          <p class="mini">Start with internal estimating workflows now, then expand to contractor SaaS rollout later.</p>
+          <div class="double-grid">
+            <input type="text" placeholder="Your name" style="padding:0.9rem;border-radius:12px;border:1px solid var(--line);">
+            <input type="email" placeholder="Work email" style="padding:0.9rem;border-radius:12px;border:1px solid var(--line);">
+          </div>
+          <div style="margin-top:1rem;">
+            <a class="btn-primary" href="#">Join the build</a>
+          </div>
+        </section>
+      </section>
+    </div>
+  </main>
 </body>
 </html>
