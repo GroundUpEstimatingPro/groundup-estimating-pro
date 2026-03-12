@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Projects | GroundUp</title>
+  <style>
+    body{
+      font-family:Arial;
+      background:#eef4ff;
+      margin:0;
+    }
+
+    .wrap{
+      max-width:1100px;
+      margin:auto;
+      padding:40px;
+    }
+
+    .card{
+      background:white;
+      padding:25px;
+      border-radius:16px;
+      margin-top:20px;
+      box-shadow:0 10px 30px rgba(0,0,0,.08);
+    }
+
+    input,button{
+      padding:10px;
+      margin-top:10px;
+      width:100%;
+      border-radius:8px;
+      border:1px solid #ccc;
+    }
+
+    button{
+      background:#1696c4;
+      color:white;
+      border:none;
+      cursor:pointer;
+    }
+
+    .project{
+      padding:10px;
+      border-bottom:1px solid #eee;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+<h1>Your Projects</h1>
+
+<div class="card">
+
+<h3>Create Project</h3>
+
+<input id="name" placeholder="Project name">
+<input id="client" placeholder="Client name">
+
+<button id="create">Create Project</button>
+
+</div>
+
+<div class="card">
+
+<h3>Project List</h3>
+
+<div id="projects"></div>
+
+</div>
+
+</div>
+
+<script type="module">
+
+import { supabase } from "/supabase-client.js";
+
+const user = await supabase.auth.getUser();
+
+if(!user.data.user){
+  window.location="/login.html";
+}
+
+async function loadProjects(){
+
+  const {data} = await supabase
+  .from("projects")
+  .select("*")
+  .order("created_at",{ascending:false});
+
+  const container = document.getElementById("projects");
+  container.innerHTML="";
+
+  data.forEach(p=>{
+
+    const div=document.createElement("div");
+    div.className="project";
+
+    div.innerHTML = `
+      <strong>${p.name}</strong><br>
+      Client: ${p.client}
+    `;
+
+    container.appendChild(div);
+
+  });
+
+}
+
+loadProjects();
+
+document.getElementById("create").onclick = async ()=>{
+
+  const name=document.getElementById("name").value;
+  const client=document.getElementById("client").value;
+
+  await supabase
+  .from("projects")
+  .insert({
+    name:name,
+    client:client
+  });
+
+  loadProjects();
+
+};
+
+</script>
+
+</body>
+</html>
