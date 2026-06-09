@@ -437,8 +437,26 @@ openBtn.onclick = async () => {
 div.innerText = file.name + " ";
 
 div.appendChild(openBtn);
+
+const deleteBtn = document.createElement("button");
+deleteBtn.innerText = "Delete";
+deleteBtn.style.marginLeft = "8px";
+
+deleteBtn.onclick = async () => {
+
+if(!confirm("Delete this file?")) return;
+
+await supabase.storage
+.from("project-files")
+.remove([filePath]);
+
+loadFiles();
+
+};
+
+div.appendChild(deleteBtn);
+
 list.appendChild(div);
-});
 
 const spacer = document.createElement("div");
 spacer.style.marginBottom = "10px";
