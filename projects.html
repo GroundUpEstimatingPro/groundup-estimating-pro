@@ -3,130 +3,134 @@
 <head>
   <title>Projects | GroundUp</title>
   <style>
-    body{
-      font-family:Arial;
-      background:#eef4ff;
-      margin:0;
-    }
-
-    .wrap{
-      max-width:1100px;
-      margin:auto;
-      padding:40px;
-    }
-
-    .card{
-      background:white;
-      padding:25px;
-      border-radius:16px;
-      margin-top:20px;
-      box-shadow:0 10px 30px rgba(0,0,0,.08);
-    }
-
-    input,button{
-      padding:10px;
-      margin-top:10px;
-      width:100%;
-      border-radius:8px;
-      border:1px solid #ccc;
-    }
-
-    button{
-      background:#1696c4;
-      color:white;
-      border:none;
-      cursor:pointer;
-    }
-
-    .project{
-      padding:10px;
-      border-bottom:1px solid #eee;
-    }
+    body{font-family:Arial;background:#eef4ff;margin:0;}
+    .wrap{max-width:1100px;margin:auto;padding:40px;}
+    .card{background:white;padding:25px;border-radius:16px;margin-top:20px;box-shadow:0 10px 30px rgba(0,0,0,.08);}
+    input,button{padding:10px;margin-top:10px;width:100%;border-radius:8px;border:1px solid #ccc;}
+    button{background:#1696c4;color:white;border:none;cursor:pointer;font-weight:bold;}
+    .project{padding:14px;border-bottom:1px solid #eee;}
+    .project a{color:#1696c4;font-weight:bold;text-decoration:none;}
+    .msg{margin-top:12px;color:#60708e;}
   </style>
 </head>
-
 <body>
-
 <div class="wrap">
+  <h1>Your Projects</h1>
 
-<h1>Your Projects</h1>
+  <div class="card">
+    <h3>Create Project</h3>
+    <input id="name" placeholder="Project name">
+    <input id="client" placeholder="Client name">
+    <button id="create">Create Project</button>
+    <div class="msg" id="message"></div>
+  </div>
 
-<div class="card">
-
-<h3>Create Project</h3>
-
-<input id="name" placeholder="Project name">
-<input id="client" placeholder="Client name">
-
-<button id="create">Create Project</button>
-
-</div>
-
-<div class="card">
-
-<h3>Project List</h3>
-
-<div id="projects"></div>
-
-</div>
-
+  <div class="card">
+    <h3>Project List</h3>
+    <div id="projects">Loading...</div>
+  </div>
 </div>
 
 <script type="module">
-
 import { supabase } from "/supabase-client.js";
 
-const user = await supabase.auth.getUser();
+const msg = document.getElementById("message");
+const { data: userData } = await supabase.auth.getUser();
 
-if(!user.data.user){
-  window.location="/login.html";
+if (!userData.user) {
+  window.location = "/login.html";
 }
 
-async function loadProjects(){
+async function getOrCreateOrg() {
+  const user = userData.user;
 
-  const {data} = await supabase
-  .from("projects")
-  .select("*")
-  .order("created_at",{ascending:false});
+  let { data: orgs } = await supabase
+    .from("organizations")
+    .select("*")
+    .eq("owner_user_id", user.id)
+    .limit(1);
+
+  if (orgs && orgs.length > 0) return orgs[0];
+
+  const { data: newOrg, error } = await supabase
+    .from("organizations")
+    .insert({
+      name: user.user_metadata?.company_name || "My Company",
+      owner_user_id: user.id
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return newOrg;
+}
+
+async function loadProjects() {
+  const { data, error } = await supabase
+    .from("projects")
+    .select("*")
+    .order("created_at", { ascending: false });
 
   const container = document.getElementById("projects");
-  container.innerHTML="";
+  container.innerHTML = "";
 
-  data.forEach(p=>{
+  if (error) {
+    container.innerHTML = "Error loading projects: " + error.message;
+    return;
+  }
 
-    const div=document.createElement("div");
-    div.className="project";
+  if (!data || data.length === 0) {
+    container.innerHTML = "No projects yet.";
+    return;
+  }
 
+  data.forEach(p => {
+    const div = document.createElement("div");
+    div.className = "project";
     div.innerHTML = `
-      <strong>${p.name}</strong><br>
-      Client: ${p.client}
+      <a href="/project.html?id=${p.id}">${p.name}</a><br>
+      Client: ${p.client_name || ""}
     `;
-
     container.appendChild(div);
-
   });
-
 }
 
-loadProjects();
+document.getElementById("create").onclick = async () => {
+  msg.textContent = "Creating project...";
 
-document.getElementById("create").onclick = async ()=>{
+  const name = document.getElementById("name").value.trim();
+  const client_name = document.getElementById("client").value.trim();
 
-  const name=document.getElementById("name").value;
-  const client=document.getElementById("client").value;
+  if (!name) {
+    msg.textContent = "Project name is required.";
+    return;
+  }
 
-  await supabase
-  .from("projects")
-  .insert({
-    name:name,
-    client:client
-  });
+  try {
+    const org = await getOrCreateOrg();
 
-  loadProjects();
+    const { error } = await supabase
+      .from("projects")
+      .insert({
+        organization_id: org.id,
+        created_by: userData.user.id,
+        name,
+        client_name,
+        status: "draft"
+      });
 
+    if (error) throw error;
+
+    msg.textContent = "Project created.";
+    document.getElementById("name").value = "";
+    document.getElementById("client").value = "";
+    loadProjects();
+  } catch (err) {
+    msg.textContent = "Error: " + err.message;
+  }
 };
 
+loadProjects();
 </script>
-
 </body>
 </html>
