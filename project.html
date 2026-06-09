@@ -114,25 +114,25 @@ Quotes
 
 <h2>AI Actions</h2>
 
-<button class="button">
+<button id="analyzeBtn" class="button">
 Analyze Documents
 </button>
 
 <br><br>
 
-<button class="button">
+<button id="estimateBtn" class="button">
 Generate Estimate
 </button>
 
 <br><br>
 
-<button class="button">
+<button id="rfiBtn" class="button">
 Generate RFIs
 </button>
 
 <br><br>
 
-<button class="button">
+<button id="proposalBtn" class="button">
 Create Proposal
 </button>
 
@@ -248,6 +248,110 @@ document.getElementById("rfiBox")
 document.getElementById("proposalBox")
 .addEventListener("change", saveWorkspace);
 
+document.getElementById("estimateBtn")
+.addEventListener("click", async () => {
+
+const notes =
+document.getElementById("projectNotes").value;
+
+document.getElementById("estimateBox").value =
+
+`GROUNDUP ESTIMATE
+
+PROJECT NOTES:
+${notes}
+
+DIRECT COSTS
+--------------------
+Labor:
+Materials:
+Equipment:
+Subcontractors:
+
+INDIRECT COSTS
+--------------------
+Mobilization:
+Supervision:
+Insurance:
+Bond:
+
+MARKUP
+--------------------
+Overhead:
+Profit:
+
+TOTAL ESTIMATE:
+`;
+
+await saveWorkspace();
+
+});
+
+
+document.getElementById("rfiBtn")
+.addEventListener("click", async () => {
+
+const notes =
+document.getElementById("projectNotes").value;
+
+document.getElementById("rfiBox").value =
+
+`RFI #1
+
+Project:
+${document.getElementById("project-name").innerText}
+
+Question:
+Please clarify scope requirements related to:
+
+${notes}
+
+Requested Response:
+Provide direction and intent.
+`;
+
+await saveWorkspace();
+
+});
+
+
+document.getElementById("proposalBtn")
+.addEventListener("click", async () => {
+
+document.getElementById("proposalBox").value =
+
+`GROUNDUP ESTIMATING PRO
+
+We are pleased to provide this proposal
+for the referenced project.
+
+Scope:
+Work will be completed in accordance
+with the plans, specifications, and
+contract requirements.
+
+Pricing:
+See attached estimate.
+
+Thank you for the opportunity to bid.
+
+Sincerely,
+
+GroundUp Estimating Pro
+`;
+
+await saveWorkspace();
+
+});
+
+
+document.getElementById("analyzeBtn")
+.addEventListener("click", async () => {
+
+alert("Document analysis will be connected after file uploads are enabled.");
+
+});
+  
 loadWorkspace();
   
 </script>
