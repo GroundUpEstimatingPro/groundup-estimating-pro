@@ -229,7 +229,7 @@ const { data } = await supabase
 if(data){
 
 document.getElementById("project-name").innerText =
-data.name;
+(data.estimate_number ? data.estimate_number + " - " : "") + data.name;
 
 document.getElementById("project-client").innerText =
 "Client: " + (data.client_name || "");
