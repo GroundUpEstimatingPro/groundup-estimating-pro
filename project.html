@@ -88,6 +88,46 @@ Back To Projects
 
 <h2>Project Overview</h2>
 
+<div class="grid">
+
+<div>
+<label>Project Status</label>
+<select id="projectStatus">
+<option value="Estimating">Estimating</option>
+<option value="Bid Submitted">Bid Submitted</option>
+<option value="Awarded">Awarded</option>
+<option value="Lost">Lost</option>
+</select>
+</div>
+
+<div>
+<label>Bid Due Date</label>
+<input type="date" id="bidDueDate">
+</div>
+
+</div>
+
+<div class="grid">
+
+<div>
+<label>Estimator</label>
+<input id="estimator">
+</div>
+
+<div>
+<label>Estimated Value ($)</label>
+<input type="number" id="projectValue">
+</div>
+
+<div>
+<label>Win Probability (%)</label>
+<input type="number" id="winProbability">
+</div>
+
+</div>
+
+<br>
+
 <input id="projectNotes"
 placeholder="Project notes, scope, bid strategy, assumptions">
 
