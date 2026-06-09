@@ -144,7 +144,7 @@ Create Proposal
 
 <h2>Estimate Builder</h2>
 
-<textarea placeholder="Estimate output will appear here"></textarea>
+<textarea id="estimateBox" placeholder="Estimate output will appear here"></textarea>
 
 </div>
 
@@ -152,7 +152,7 @@ Create Proposal
 
 <h2>RFIs</h2>
 
-<textarea placeholder="Generated RFIs"></textarea>
+<textarea id="rfiBox" placeholder="Generated RFIs"></textarea>
 
 </div>
 
@@ -160,7 +160,7 @@ Create Proposal
 
 <h2>Proposal</h2>
 
-<textarea placeholder="Proposal draft"></textarea>
+<textarea id="proposalBox" placeholder="Proposal draft"></textarea>
 
 </div>
 
@@ -194,6 +194,62 @@ document.getElementById("project-client").innerText =
 
 }
 
+async function loadWorkspace(){
+
+const { data } = await supabase
+.from("project_workspace")
+.select("*")
+.eq("project_id", projectId)
+.single();
+
+if(!data) return;
+
+document.getElementById("projectNotes").value =
+data.notes || "";
+
+document.getElementById("estimateBox").value =
+data.estimate || "";
+
+document.getElementById("rfiBox").value =
+data.rfis || "";
+
+document.getElementById("proposalBox").value =
+data.proposal || "";
+
+}
+
+async function saveWorkspace(){
+
+const payload = {
+project_id: projectId,
+notes: document.getElementById("projectNotes").value,
+estimate: document.getElementById("estimateBox").value,
+rfis: document.getElementById("rfiBox").value,
+proposal: document.getElementById("proposalBox").value
+};
+
+await supabase
+.from("project_workspace")
+.upsert(payload, {
+onConflict: "project_id"
+});
+
+}
+
+document.getElementById("projectNotes")
+.addEventListener("change", saveWorkspace);
+
+document.getElementById("estimateBox")
+.addEventListener("change", saveWorkspace);
+
+document.getElementById("rfiBox")
+.addEventListener("change", saveWorkspace);
+
+document.getElementById("proposalBox")
+.addEventListener("change", saveWorkspace);
+
+loadWorkspace();
+  
 </script>
 
 </body>
