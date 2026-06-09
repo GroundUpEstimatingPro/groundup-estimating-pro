@@ -318,6 +318,21 @@ onConflict: "project_id"
 
 }
 
+document.getElementById("projectStatus")
+.addEventListener("change", saveWorkspace);
+
+document.getElementById("bidDueDate")
+.addEventListener("change", saveWorkspace);
+
+document.getElementById("estimator")
+.addEventListener("change", saveWorkspace);
+
+document.getElementById("projectValue")
+.addEventListener("change", saveWorkspace);
+
+document.getElementById("winProbability")
+.addEventListener("change", saveWorkspace);
+  
 document.getElementById("projectNotes")
 .addEventListener("change", saveWorkspace);
 
