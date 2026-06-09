@@ -99,7 +99,9 @@ placeholder="Project notes, scope, bid strategy, assumptions">
 
 <h2>Documents</h2>
 
-<input type="file">
+<input id="fileInput" type="file">
+<button id="uploadBtn" class="button">Upload File</button>
+<div id="fileList" style="margin-top:15px;"></div>
 
 <p>
 Plans<br>
@@ -351,6 +353,63 @@ document.getElementById("analyzeBtn")
 alert("Document analysis will be connected after file uploads are enabled.");
 
 });
+
+async function uploadFile(){
+
+const file = document.getElementById("fileInput").files[0];
+
+if(!file){
+alert("Choose a file first.");
+return;
+}
+
+const filePath = projectId + "/" + Date.now() + "-" + file.name;
+
+const { error } = await supabase.storage
+.from("project-files")
+.upload(filePath, file);
+
+if(error){
+alert("Upload failed: " + error.message);
+return;
+}
+
+alert("File uploaded.");
+loadFiles();
+
+}
+
+async function loadFiles(){
+
+const { data, error } = await supabase.storage
+.from("project-files")
+.list(projectId);
+
+const list = document.getElementById("fileList");
+list.innerHTML = "";
+
+if(error){
+list.innerHTML = "Error loading files.";
+return;
+}
+
+if(!data || data.length === 0){
+list.innerHTML = "No files uploaded yet.";
+return;
+}
+
+data.forEach(file => {
+const div = document.createElement("div");
+div.innerText = file.name;
+list.appendChild(div);
+});
+
+}
+
+document.getElementById("uploadBtn")
+.addEventListener("click", uploadFile);
+
+loadFiles();
   
 loadWorkspace();
   
