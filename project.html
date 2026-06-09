@@ -217,6 +217,7 @@ import { supabase } from "/supabase-client.js";
 const params = new URLSearchParams(window.location.search);
 
 const projectId = params.get("id");
+let currentProject = null;
 
 if(projectId){
 
@@ -228,13 +229,15 @@ const { data } = await supabase
 
 if(data){
 
+currentProject = data;
+
 document.getElementById("project-name").innerText =
-(data.estimate_number ? data.estimate_number + " - " : "") + data.name;
+(data.job_number ? "JOB " + data.job_number + " | " : "") +
+(data.estimate_number ? data.estimate_number + " - " : "") +
+data.name;
 
 document.getElementById("project-client").innerText =
 "Client: " + (data.client_name || "");
-
-}
 
 }
 
