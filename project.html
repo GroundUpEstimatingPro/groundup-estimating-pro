@@ -282,7 +282,30 @@ data.proposal || "";
 }
 
 async function saveWorkspace(){
+if(
+document.getElementById("projectStatus").value === "Awarded" &&
+currentProject &&
+!currentProject.job_number
+){
 
+const { data: nextJob } = await supabase.rpc(
+"get_next_job_number",
+{
+org_id: currentProject.organization_id
+}
+);
+
+currentProject.job_number = nextJob;
+
+await supabase
+.from("projects")
+.update({
+job_number: nextJob,
+awarded_at: new Date().toISOString()
+})
+.eq("id", projectId);
+
+}
 const payload = {
 project_id: projectId,
 
