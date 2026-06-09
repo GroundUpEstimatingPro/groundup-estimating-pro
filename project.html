@@ -390,7 +390,12 @@ alert("Upload failed: " + error.message);
 return;
 }
 
-console.log("File uploaded to " + category + ".");
+document.getElementById("uploadStatus").innerText =
+"✓ Uploaded to " + category;
+
+setTimeout(() => {
+document.getElementById("uploadStatus").innerText = "";
+}, 3000);
 document.getElementById("fileInput").value = "";
 loadFiles();
 
