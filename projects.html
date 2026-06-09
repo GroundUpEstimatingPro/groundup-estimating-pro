@@ -109,15 +109,23 @@ document.getElementById("create").onclick = async () => {
   try {
     const org = await getOrCreateOrg();
 
-    const { error } = await supabase
-      .from("projects")
-      .insert({
-        organization_id: org.id,
-        created_by: userData.user.id,
-        name,
-        client_name,
-        status: "draft"
-      });
+    const { data: estimateNumber, error: numberError } = await supabase
+.rpc("get_next_estimate_number", {
+  org_id: org.id
+});
+
+if (numberError) throw numberError;
+
+const { error } = await supabase
+.from("projects")
+.insert({
+  organization_id: org.id,
+  created_by: userData.user.id,
+  name,
+  client_name,
+  status: "draft",
+  estimate_number: estimateNumber
+});
 
     if (error) throw error;
 
