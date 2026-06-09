@@ -99,6 +99,13 @@ placeholder="Project notes, scope, bid strategy, assumptions">
 
 <h2>Documents</h2>
 
+<select id="fileCategory">
+  <option value="plans">Plans</option>
+  <option value="specifications">Specifications</option>
+  <option value="addenda">Addenda</option>
+  <option value="quotes">Quotes</option>
+</select>
+
 <input id="fileInput" type="file">
 <button id="uploadBtn" class="button">Upload File</button>
 <div id="fileList" style="margin-top:15px;"></div>
@@ -356,46 +363,63 @@ alert("Document analysis will be connected after file uploads are enabled.");
 
 async function uploadFile(){
 
+const uploadBtn = document.getElementById("uploadBtn");
 const file = document.getElementById("fileInput").files[0];
+const category = document.getElementById("fileCategory").value;
 
 if(!file){
 alert("Choose a file first.");
 return;
 }
 
-const filePath = projectId + "/" + Date.now() + "-" + file.name;
+uploadBtn.disabled = true;
+uploadBtn.innerText = "Uploading...";
+
+const cleanName = file.name.replaceAll("/", "-");
+const filePath = projectId + "/" + category + "/" + cleanName;
 
 const { error } = await supabase.storage
 .from("project-files")
-.upload(filePath, file);
+.upload(filePath, file, {
+upsert: true
+});
+
+uploadBtn.disabled = false;
+uploadBtn.innerText = "Upload File";
 
 if(error){
 alert("Upload failed: " + error.message);
 return;
 }
 
-alert("File uploaded.");
+alert("File uploaded to " + category + ".");
+document.getElementById("fileInput").value = "";
 loadFiles();
 
 }
 
 async function loadFiles(){
 
-const { data, error } = await supabase.storage
-.from("project-files")
-.list(projectId);
-
+const categories = ["plans", "specifications", "addenda", "quotes"];
 const list = document.getElementById("fileList");
 list.innerHTML = "";
 
-if(error){
-list.innerHTML = "Error loading files.";
-return;
-}
+for (const category of categories) {
 
-if(!data || data.length === 0){
-list.innerHTML = "No files uploaded yet.";
-return;
+const heading = document.createElement("strong");
+heading.innerText = category.toUpperCase();
+list.appendChild(heading);
+
+const { data, error } = await supabase.storage
+.from("project-files")
+.list(projectId + "/" + category);
+
+if(error || !data || data.length === 0){
+const empty = document.createElement("div");
+empty.innerText = "No files";
+empty.style.marginBottom = "10px";
+list.appendChild(empty);
+continue;
 }
 
 data.forEach(file => {
@@ -403,6 +427,12 @@ const div = document.createElement("div");
 div.innerText = file.name;
 list.appendChild(div);
 });
+
+const spacer = document.createElement("div");
+spacer.style.marginBottom = "10px";
+list.appendChild(spacer);
+
+}
 
 }
 
