@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Project Workspace</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#eef4ff;
+margin:0;
+}
+
+.wrap{
+max-width:1200px;
+margin:auto;
+padding:40px;
+}
+
+.card{
+background:white;
+padding:25px;
+border-radius:16px;
+margin-top:20px;
+box-shadow:0 10px 30px rgba(0,0,0,.08);
+}
+
+.top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.button{
+background:#1696c4;
+color:white;
+padding:12px 20px;
+border-radius:8px;
+text-decoration:none;
+border:none;
+cursor:pointer;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+margin-top:20px;
+}
+
+textarea{
+width:100%;
+height:160px;
+padding:12px;
+border-radius:8px;
+border:1px solid #ccc;
+}
+
+input{
+width:100%;
+padding:12px;
+border-radius:8px;
+border:1px solid #ccc;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="wrap">
+
+<div class="top">
+
+<div>
+<h1 id="project-name">Project Workspace</h1>
+<p id="project-client"></p>
+</div>
+
+<a href="/projects.html" class="button">
+Back To Projects
+</a>
+
+</div>
+
+<div class="card">
+
+<h2>Project Overview</h2>
+
+<input id="projectNotes"
+placeholder="Project notes, scope, bid strategy, assumptions">
+
+</div>
+
+<div class="grid">
+
+<div class="card">
+
+<h2>Documents</h2>
+
+<input type="file">
+
+<p>
+Plans<br>
+Specifications<br>
+Addenda<br>
+Quotes
+</p>
+
+</div>
+
+<div class="card">
+
+<h2>AI Actions</h2>
+
+<button class="button">
+Analyze Documents
+</button>
+
+<br><br>
+
+<button class="button">
+Generate Estimate
+</button>
+
+<br><br>
+
+<button class="button">
+Generate RFIs
+</button>
+
+<br><br>
+
+<button class="button">
+Create Proposal
+</button>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>Estimate Builder</h2>
+
+<textarea placeholder="Estimate output will appear here"></textarea>
+
+</div>
+
+<div class="card">
+
+<h2>RFIs</h2>
+
+<textarea placeholder="Generated RFIs"></textarea>
+
+</div>
+
+<div class="card">
+
+<h2>Proposal</h2>
+
+<textarea placeholder="Proposal draft"></textarea>
+
+</div>
+
+</div>
+
+<script type="module">
+
+import { supabase } from "/supabase-client.js";
+
+const params = new URLSearchParams(window.location.search);
+
+const projectId = params.get("id");
+
+if(projectId){
+
+const { data } = await supabase
+.from("projects")
+.select("*")
+.eq("id", projectId)
+.single();
+
+if(data){
+
+document.getElementById("project-name").innerText =
+data.name;
+
+document.getElementById("project-client").innerText =
+"Client: " + data.client;
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
