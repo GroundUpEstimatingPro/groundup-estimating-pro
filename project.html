@@ -417,7 +417,26 @@ continue;
 
 data.forEach(file => {
 const div = document.createElement("div");
-div.innerText = file.name;
+
+const filePath = projectId + "/" + category + "/" + file.name;
+
+const openBtn = document.createElement("button");
+openBtn.innerText = "Open";
+openBtn.style.marginLeft = "8px";
+
+openBtn.onclick = async () => {
+  const { data } = await supabase.storage
+    .from("project-files")
+    .createSignedUrl(filePath, 60);
+
+  if(data?.signedUrl){
+    window.open(data.signedUrl, "_blank");
+  }
+};
+
+div.innerText = file.name + " ";
+
+div.appendChild(openBtn);
 list.appendChild(div);
 });
 
