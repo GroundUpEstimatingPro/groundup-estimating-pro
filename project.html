@@ -288,22 +288,32 @@ currentProject &&
 !currentProject.job_number
 ){
 
-const { data: nextJob } = await supabase.rpc(
+const { data: nextJob, error: jobError } = await supabase.rpc(
 "get_next_job_number",
 {
 org_id: currentProject.organization_id
 }
 );
 
+if(jobError){
+alert("Job number error: " + jobError.message);
+return;
+}
+
 currentProject.job_number = nextJob;
 
-await supabase
+const { error: updateError } = await supabase
 .from("projects")
 .update({
 job_number: nextJob,
 awarded_at: new Date().toISOString()
 })
 .eq("id", projectId);
+
+if(updateError){
+alert("Project update error: " + updateError.message);
+return;
+}
 
 }
 const payload = {
