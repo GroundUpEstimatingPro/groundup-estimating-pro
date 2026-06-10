@@ -245,10 +245,10 @@ document.getElementById("project-client").innerText =
 async function loadWorkspace(){
 
 const { data } = await supabase
-.from("project_workspace")
-.select("*")
-.eq("project_id", projectId)
-.single();
+  .from("project_workspace")
+  .select("*")
+  .eq("project_id", projectId)
+  .maybeSingle();
 
 if(!data){
 
