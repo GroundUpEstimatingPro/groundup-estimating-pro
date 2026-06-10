@@ -250,7 +250,14 @@ const { data } = await supabase
 .eq("project_id", projectId)
 .single();
 
-if(!data) return;
+if(!data){
+
+if(currentProject && currentProject.job_number){
+document.getElementById("projectStatus").value = "Awarded";
+}
+
+return;
+}
 
 document.getElementById("projectStatus").value =
 currentProject?.job_number ? "Awarded" : (data.project_status || currentProject?.status || "Estimating");
