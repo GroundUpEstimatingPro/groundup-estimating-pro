@@ -253,7 +253,7 @@ const { data } = await supabase
 if(!data) return;
 
 document.getElementById("projectStatus").value =
-currentProject?.status || data.project_status || "Estimating";
+currentProject?.job_number ? "Awarded" : (data.project_status || currentProject?.status || "Estimating");
 
 document.getElementById("bidDueDate").value =
 data.bid_due_date || "";
