@@ -260,7 +260,7 @@ return;
 }
 
 document.getElementById("projectStatus").value =
-currentProject?.job_number ? "Awarded" : (data.project_status || currentProject?.status || "Estimating");
+data.project_status || currentProject?.status || "Estimating";
 
 document.getElementById("bidDueDate").value =
 data.bid_due_date || "";
@@ -285,10 +285,6 @@ data.rfis || "";
 
 document.getElementById("proposalBox").value =
 data.proposal || "";
-
-if(currentProject && currentProject.job_number){
-document.getElementById("projectStatus").value = "Awarded";
-}
 
 }
 
