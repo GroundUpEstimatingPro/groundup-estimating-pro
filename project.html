@@ -360,12 +360,15 @@ proposal:
 document.getElementById("proposalBox").value
 };
 
-await supabase
+const { error: workspaceError } = await supabase
 .from("project_workspace")
 .upsert(payload, {
 onConflict: "project_id"
 });
 
+if(workspaceError){
+alert("Workspace save error: " + workspaceError.message);
+return;
 }
 
 document.getElementById("projectStatus")
