@@ -54,6 +54,11 @@ margin-bottom:20px;
 </div>
 
 <div class="card">
+<h3 id="winRate">0%</h3>
+<p>Win Rate</p>
+</div>
+    
+<div class="card">
 <h3 id="pipelineValue">$0</h3>
 <p>Pipeline Value</p>
 </div>
@@ -132,10 +137,17 @@ data.filter(p =>
 p.status === "Awarded"
 ).length;
 
+  const winRate =
+submitted > 0
+? Math.round((awarded / submitted) * 100)
+: 0;
+
 document.getElementById("totalProjects").innerText = total;
 document.getElementById("activeEstimates").innerText = estimating;
 document.getElementById("submittedBids").innerText = submitted;
 document.getElementById("awardedJobs").innerText = awarded;
+  document.getElementById("winRate").innerText =
+winRate + "%";
   const pipeline = data.reduce((sum, p) => {
 return sum + (Number(p.project_value) || 0);
 }, 0);
