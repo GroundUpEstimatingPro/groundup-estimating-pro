@@ -279,6 +279,10 @@ data.rfis || "";
 document.getElementById("proposalBox").value =
 data.proposal || "";
 
+if(currentProject && currentProject.job_number){
+document.getElementById("projectStatus").value = "Awarded";
+}
+
 }
 
 async function saveWorkspace(){
