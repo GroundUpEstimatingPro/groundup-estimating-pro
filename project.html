@@ -306,7 +306,8 @@ const { error: updateError } = await supabase
 .from("projects")
 .update({
 job_number: nextJob,
-awarded_at: new Date().toISOString()
+awarded_at: new Date().toISOString(),
+status: "Awarded"
 })
 .eq("id", projectId);
 
