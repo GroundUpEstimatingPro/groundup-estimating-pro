@@ -11,6 +11,12 @@
     .project{padding:14px;border-bottom:1px solid #eee;}
     .project a{color:#1696c4;font-weight:bold;text-decoration:none;}
     .msg{margin-top:12px;color:#60708e;}
+    .grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:15px;
+margin-bottom:20px;
+}
   </style>
 </head>
 <body>
@@ -25,6 +31,35 @@
     <div class="msg" id="message"></div>
   </div>
 
+  <div class="grid">
+
+<div class="card">
+<h3 id="totalProjects">0</h3>
+<p>Total Projects</p>
+</div>
+
+<div class="card">
+<h3 id="activeEstimates">0</h3>
+<p>Estimating</p>
+</div>
+
+<div class="card">
+<h3 id="submittedBids">0</h3>
+<p>Bids Submitted</p>
+</div>
+
+<div class="card">
+<h3 id="awardedJobs">0</h3>
+<p>Awarded Jobs</p>
+</div>
+
+<div class="card">
+<h3 id="pipelineValue">$0</h3>
+<p>Pipeline Value</p>
+</div>
+
+</div>
+  
   <div class="card">
     <h3>Project List</h3>
     <div id="projects">Loading...</div>
@@ -79,6 +114,34 @@ async function loadProjects() {
     return;
   }
 
+  const total = data.length;
+
+const estimating =
+data.filter(p =>
+p.status === "draft" ||
+p.status === "Estimating"
+).length;
+
+const submitted =
+data.filter(p =>
+p.status === "Bid Submitted"
+).length;
+
+const awarded =
+data.filter(p =>
+p.status === "Awarded"
+).length;
+
+document.getElementById("totalProjects").innerText = total;
+document.getElementById("activeEstimates").innerText = estimating;
+document.getElementById("submittedBids").innerText = submitted;
+document.getElementById("awardedJobs").innerText = awarded;
+  const pipeline = data.reduce((sum, p) => {
+return sum + (Number(p.project_value) || 0);
+}, 0);
+
+document.getElementById("pipelineValue").innerText =
+"$" + pipeline.toLocaleString();
   if (!data || data.length === 0) {
     container.innerHTML = "No projects yet.";
     return;
