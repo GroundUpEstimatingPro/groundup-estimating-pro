@@ -363,6 +363,16 @@ alert("Workspace save error: " + workspaceError.message);
 return;
 }
 
+  await supabase
+.from("projects")
+.update({
+status: document.getElementById("projectStatus").value,
+project_value: Number(
+document.getElementById("projectValue").value || 0
+)
+})
+.eq("id", projectId);
+  
 }
 
 document.getElementById("projectStatus")
