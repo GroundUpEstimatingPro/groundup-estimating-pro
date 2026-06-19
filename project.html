@@ -409,38 +409,40 @@ const notes =
 document.getElementById("projectNotes").value;
 
 document.getElementById("estimateBox").value =
+"Generating estimate...";
 
-`GROUNDUP ESTIMATE
+try {
 
-PROJECT NOTES:
-${notes}
+const response = await fetch("/api/generate-estimate", {
+method: "POST",
+headers: {
+"Content-Type": "application/json"
+},
+body: JSON.stringify({
+projectName: currentProject?.name || "",
+clientName: currentProject?.client_name || "",
+notes: notes
+})
+});
 
-DIRECT COSTS
---------------------
-Labor:
-Materials:
-Equipment:
-Subcontractors:
+const result = await response.json();
 
-INDIRECT COSTS
---------------------
-Mobilization:
-Supervision:
-Insurance:
-Bond:
-
-MARKUP
---------------------
-Overhead:
-Profit:
-
-TOTAL ESTIMATE:
-`;
+document.getElementById("estimateBox").value =
+result.estimate || "No estimate generated.";
 
 await saveWorkspace();
 
-});
+}
+catch(error){
 
+document.getElementById("estimateBox").value =
+"Error generating estimate.";
+
+console.error(error);
+
+}
+
+});
 
 document.getElementById("rfiBtn")
 .addEventListener("click", async () => {
