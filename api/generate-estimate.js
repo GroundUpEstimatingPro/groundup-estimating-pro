@@ -38,12 +38,24 @@ Return:
 
     const result = await response.json();
 
-    const text =
-      result.output_text ||
-      result.output?.[0]?.content?.[0]?.text ||
-      "No estimate generated.";
+if(!response.ok){
+return res.status(500).json({
+error: result.error?.message || JSON.stringify(result)
+});
+}
 
-    return res.status(200).json({ estimate: text });
+let text = result.output_text;
+
+if(!text && result.output){
+text = result.output
+.flatMap(item => item.content || [])
+.map(content => content.text || "")
+.join("\n");
+}
+
+return res.status(200).json({
+estimate: text || JSON.stringify(result, null, 2)
+});
 
   } catch (err) {
     return res.status(500).json({ error: err.message });
