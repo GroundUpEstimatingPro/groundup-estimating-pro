@@ -427,8 +427,16 @@ notes: notes
 
 const result = await response.json();
 
+console.log("AI estimate result:", result);
+
+if(result.error){
 document.getElementById("estimateBox").value =
-result.estimate || "No estimate generated.";
+"AI error: " + result.error;
+return;
+}
+
+document.getElementById("estimateBox").value =
+result.estimate || JSON.stringify(result, null, 2) || "No estimate generated.";
 
 await saveWorkspace();
 
