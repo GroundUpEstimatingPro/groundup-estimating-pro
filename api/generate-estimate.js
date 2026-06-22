@@ -14,7 +14,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: "gpt-4.1-mini",
-       input: `
+        input: `
 You are a senior electrical estimator with 25+ years of experience pricing commercial, industrial, utility, water treatment, pump station, and infrastructure projects.
 
 Project Name:
@@ -28,20 +28,16 @@ ${notes}
 
 Create a realistic construction estimate.
 
-Requirements:
+Rules:
+- Do NOT use placeholders like $XX,XXX.
+- Use actual dollar values.
+- Use realistic 2025 US construction pricing assumptions.
+- If exact quantities are missing, make reasonable estimating assumptions and clearly state them.
+- Include labor hours, labor rates, material costs, equipment costs, overhead, profit, contingency, and total cost.
+- Format all dollar amounts as currency.
+- This is a conceptual estimate and must be reviewed by a qualified estimator.
 
-1. Analyze the scope described in the notes.
-2. Identify all major electrical systems.
-3. Estimate labor hours by system.
-4. Estimate material costs using realistic 2025 US construction pricing.
-5. Estimate equipment and subcontractor costs.
-6. Include overhead and profit.
-7. Include contingency.
-8. Provide a final estimated project value.
-9. Show calculations and assumptions.
-10. Output actual dollar values, not placeholders.
-
-Format:
+Return this format:
 
 PROJECT OVERVIEW
 
@@ -49,17 +45,17 @@ SCOPE BREAKDOWN
 
 LABOR COSTS
 - Item
-- Hours
-- Rate
-- Total
+- Estimated Hours
+- Labor Rate
+- Total Labor Cost
 
 MATERIAL COSTS
 - Item
-- Quantity
+- Quantity Assumption
 - Unit Cost
-- Total
+- Total Material Cost
 
-EQUIPMENT COSTS
+EQUIPMENT / RENTALS
 
 SUBCONTRACTOR COSTS
 
@@ -73,7 +69,7 @@ TOTAL ESTIMATED COST
 
 KEY ASSUMPTIONS
 
-RISKS
+RISKS / EXCLUSIONS
 
 RFIs
 `
@@ -82,24 +78,24 @@ RFIs
 
     const result = await response.json();
 
-if(!response.ok){
-return res.status(500).json({
-error: result.error?.message || JSON.stringify(result)
-});
-}
+    if (!response.ok) {
+      return res.status(500).json({
+        error: result.error?.message || JSON.stringify(result)
+      });
+    }
 
-let text = result.output_text;
+    let text = result.output_text;
 
-if(!text && result.output){
-text = result.output
-.flatMap(item => item.content || [])
-.map(content => content.text || "")
-.join("\n");
-}
+    if (!text && result.output) {
+      text = result.output
+        .flatMap(item => item.content || [])
+        .map(content => content.text || "")
+        .join("\n");
+    }
 
-return res.status(200).json({
-estimate: text || JSON.stringify(result, null, 2)
-});
+    return res.status(200).json({
+      estimate: text || JSON.stringify(result, null, 2)
+    });
 
   } catch (err) {
     return res.status(500).json({ error: err.message });
