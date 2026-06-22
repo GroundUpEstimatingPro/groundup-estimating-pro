@@ -512,7 +512,54 @@ await saveWorkspace();
 document.getElementById("analyzeBtn")
 .addEventListener("click", async () => {
 
-alert("Document analysis will be connected after file uploads are enabled.");
+document.getElementById("estimateBox").value =
+"Analyzing project information...";
+
+const notes =
+document.getElementById("projectNotes").value;
+
+try {
+
+const response = await fetch("/api/generate-estimate", {
+method: "POST",
+headers: {
+"Content-Type": "application/json"
+},
+body: JSON.stringify({
+projectName: currentProject?.name || "",
+clientName: currentProject?.client_name || "",
+notes: `
+Analyze this project and provide:
+
+1. Scope Summary
+2. Key Electrical Systems
+3. Major Risks
+4. Bid Strategy
+5. Top 10 RFIs
+
+Project Notes:
+
+${notes}
+`
+})
+});
+
+const result = await response.json();
+
+document.getElementById("estimateBox").value =
+result.estimate || "Analysis complete.";
+
+await saveWorkspace();
+
+}
+catch(error){
+
+document.getElementById("estimateBox").value =
+"Analysis failed.";
+
+console.error(error);
+
+}
 
 });
 
