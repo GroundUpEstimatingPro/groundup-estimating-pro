@@ -14,24 +14,68 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: "gpt-4.1-mini",
-        input: `
-You are a construction estimating assistant.
+       input: `
+You are a senior electrical estimator with 25+ years of experience pricing commercial, industrial, utility, water treatment, pump station, and infrastructure projects.
 
-Create a preliminary estimate outline for this project.
+Project Name:
+${projectName}
 
-Project: ${projectName}
-Client: ${clientName}
-Notes: ${notes}
+Client:
+${clientName}
 
-Return:
-1. Scope Summary
-2. Major Cost Categories
-3. Labor Considerations
-4. Material Considerations
-5. Equipment Considerations
-6. Risks / Exclusions
-7. RFIs
-8. Preliminary Estimate Format
+Estimator Notes:
+${notes}
+
+Create a realistic construction estimate.
+
+Requirements:
+
+1. Analyze the scope described in the notes.
+2. Identify all major electrical systems.
+3. Estimate labor hours by system.
+4. Estimate material costs using realistic 2025 US construction pricing.
+5. Estimate equipment and subcontractor costs.
+6. Include overhead and profit.
+7. Include contingency.
+8. Provide a final estimated project value.
+9. Show calculations and assumptions.
+10. Output actual dollar values, not placeholders.
+
+Format:
+
+PROJECT OVERVIEW
+
+SCOPE BREAKDOWN
+
+LABOR COSTS
+- Item
+- Hours
+- Rate
+- Total
+
+MATERIAL COSTS
+- Item
+- Quantity
+- Unit Cost
+- Total
+
+EQUIPMENT COSTS
+
+SUBCONTRACTOR COSTS
+
+OVERHEAD
+
+PROFIT
+
+CONTINGENCY
+
+TOTAL ESTIMATED COST
+
+KEY ASSUMPTIONS
+
+RISKS
+
+RFIs
 `
       })
     });
