@@ -43,6 +43,11 @@
     .totals-list strong{color:var(--ink)}
     .ai-review{border:1px solid #f0c6a9;background:#fff7f1;border-radius:8px;padding:13px;margin-bottom:12px;color:#6f442b}
     .ai-review p{margin:6px 0 0}
+    .ai-tools{border:1px solid #edf1f2;background:#fbfcfc;border-radius:8px;padding:12px}
+    .ai-tools h3{font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:#53616b;margin-bottom:10px}
+    .ai-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .ai-actions .button{width:100%;min-height:42px;text-align:center;background:#fff;border-color:#ccd7dc;color:var(--ink);box-shadow:none}
+    .ai-actions .button:hover{border-color:var(--steel);background:#f3f8f9}
     .library{margin-top:16px}
     .library-controls{display:grid;grid-template-columns:220px minmax(260px,1fr);gap:12px;margin-bottom:12px}
     .library-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
@@ -53,12 +58,12 @@
     .library-meta span{background:#f6f7f5;border:1px solid #edf1f2;border-radius:7px;padding:7px}
     .source-note{border:1px solid #f0c6a9;background:#fff7f1;color:#6f442b;border-radius:8px;padding:12px;margin-bottom:14px}
     .outputs{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
-    pre{white-space:pre-wrap;margin:0;color:#34424c;font-family:Consolas,ui-monospace,monospace;font-size:14px;min-height:120px;background:#f9fbfb;border:1px solid #edf1f2;border-radius:8px;padding:12px}
+    pre{white-space:pre-wrap;margin:0;color:#34424c;font-family:Consolas,ui-monospace,monospace;font-size:14px}
     .file-list strong{display:block;margin:12px 0 6px}
     .file-row{display:flex;gap:8px;align-items:center;justify-content:space-between;border-bottom:1px solid #edf1f2;padding:7px 0}
     .file-row button{width:auto;min-height:30px}
     @media(max-width:1120px){.workspace,.outputs{grid-template-columns:1fr}.library-list{grid-template-columns:1fr 1fr}.hero{display:grid}}
-    @media(max-width:700px){main{padding:12px}.topbar{padding:10px 12px}.topbar .button{display:none}.two-col,.library-controls,.library-list{grid-template-columns:1fr}}
+    @media(max-width:700px){main{padding:12px}.topbar{padding:10px 12px}.topbar .button{display:none}.two-col,.library-controls,.library-list,.ai-actions{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -155,10 +160,15 @@
         <div class="total" id="grandTotal">$0</div>
         <div class="totals-list" id="totalsList"></div>
         <div class="ai-review"><strong>AI Review</strong><p id="aiReview">Use the buttons below to review this calculated estimate.</p></div>
-        <button class="button dark full" id="analyzeBtn" type="button">Analyze Scope</button>
-        <button class="button dark full" id="estimateBtn" type="button">Review Estimate</button>
-        <button class="button full" id="rfiBtn" type="button">Generate RFIs</button>
-        <button class="button full" id="proposalBtn" type="button">Create Proposal</button>
+        <div class="ai-tools">
+          <h3>AI Actions</h3>
+          <div class="ai-actions">
+            <button class="button" id="analyzeBtn" type="button">Analyze Scope</button>
+            <button class="button" id="estimateBtn" type="button">Review Estimate</button>
+            <button class="button" id="rfiBtn" type="button">Generate RFIs</button>
+            <button class="button" id="proposalBtn" type="button">Create Proposal</button>
+          </div>
+        </div>
       </aside>
     </section>
 
@@ -412,28 +422,23 @@
     async function runAi(mode){
       const target = mode === "rfi" ? el("rfiBox") : mode === "proposal" ? el("proposalBox") : el("estimateBox");
       const panel = mode === "rfi" ? el("rfi") : mode === "proposal" ? el("proposal") : el("estimateReviewPanel");
-      target.innerText = "Generating... If this takes more than 20 seconds, check the Vercel OPENAI_API_KEY setting.";
+      target.innerText = "Generating...";
       panel.scrollIntoView({behavior:"smooth",block:"start"});
-      try {
-        const response = await fetch("/api/generate-estimate",{
-          method:"POST",
-          headers:{"Content-Type":"application/json"},
-          body:JSON.stringify({
-            mode,
-            projectName:currentProject?.name || "",
-            clientName:currentProject?.client_name || "",
-            notes:el("projectNotes").value,
-            estimate:estimatePayload()
-          })
-        });
-        const result = await response.json();
-        target.innerText = result.estimate || result.output || result.error || "No output generated.";
-        await saveWorkspace();
-        panel.scrollIntoView({behavior:"smooth",block:"start"});
-      } catch (error) {
-        target.innerText = "AI request failed. This usually means the Vercel API route or OPENAI_API_KEY is not configured correctly.\n\nError: " + error.message;
-        panel.scrollIntoView({behavior:"smooth",block:"start"});
-      }
+      const response = await fetch("/api/generate-estimate",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          mode,
+          projectName:currentProject?.name || "",
+          clientName:currentProject?.client_name || "",
+          notes:el("projectNotes").value,
+          estimate:estimatePayload()
+        })
+      });
+      const result = await response.json();
+      target.innerText = result.estimate || result.output || result.error || "No output generated.";
+      await saveWorkspace();
+      panel.scrollIntoView({behavior:"smooth",block:"start"});
     }
 
     async function uploadFile(){
