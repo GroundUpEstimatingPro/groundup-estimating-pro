@@ -1,695 +1,532 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-<title>Project Workspace</title>
-
-<style>
-
-body{
-font-family:Arial;
-background:#eef4ff;
-margin:0;
-}
-
-.wrap{
-max-width:1200px;
-margin:auto;
-padding:40px;
-}
-
-.card{
-background:white;
-padding:25px;
-border-radius:16px;
-margin-top:20px;
-box-shadow:0 10px 30px rgba(0,0,0,.08);
-}
-
-.top{
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-
-.button{
-background:#1696c4;
-color:white;
-padding:12px 20px;
-border-radius:8px;
-text-decoration:none;
-border:none;
-cursor:pointer;
-}
-
-.grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:20px;
-margin-top:20px;
-}
-
-textarea{
-width:100%;
-height:160px;
-padding:12px;
-border-radius:8px;
-border:1px solid #ccc;
-}
-
-input{
-width:100%;
-padding:12px;
-border-radius:8px;
-border:1px solid #ccc;
-}
-
-</style>
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Project Workspace | GroundUp</title>
+  <style>
+    :root{--ink:#172027;--muted:#65727d;--line:#d9e0e4;--paper:#f6f7f5;--white:#fff;--orange:#e46f2e;--steel:#2f6478;--green:#3f8067}
+    *{box-sizing:border-box}
+    body{font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--paper);margin:0;color:var(--ink);line-height:1.45}
+    button,input,select,textarea{font:inherit}
+    button{cursor:pointer}
+    .topbar{position:sticky;top:0;z-index:20;background:rgba(246,247,245,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding:13px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .brand{display:flex;align-items:center;gap:11px}
+    .mark{width:38px;height:38px;border-radius:8px;background:linear-gradient(135deg,var(--orange),#f3b264);color:#fff;display:grid;place-items:center;font-weight:900}
+    .brand span{display:block;color:var(--muted);font-size:12px}
+    .button{border:1px solid var(--line);border-radius:8px;min-height:40px;padding:0 14px;display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#fff;color:var(--ink);font-weight:800;text-decoration:none}
+    .button.dark{background:var(--ink);border-color:var(--ink);color:#fff}
+    .button.orange{background:var(--orange);border-color:var(--orange);color:#fff}
+    .button.full{width:100%}
+    main{max-width:1440px;margin:0 auto;padding:22px}
+    .hero{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:16px}
+    h1,h2,h3{margin:0}
+    .hero p,.panel-title p{margin:6px 0 0;color:var(--muted)}
+    .badge{display:inline-flex;align-items:center;min-height:26px;padding:0 9px;border-radius:7px;background:#eef5f6;color:#265d71;font-size:12px;font-weight:900}
+    .workspace{display:grid;grid-template-columns:320px minmax(0,1fr) 310px;gap:16px;align-items:start}
+    .panel{background:#fff;border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 26px rgba(21,31,38,.05);padding:18px}
+    .panel-title{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:16px}
+    label{display:grid;gap:6px;color:#4a5660;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.05em;margin-bottom:13px}
+    input,select,textarea{width:100%;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);min-height:42px;padding:9px 10px;outline:none}
+    textarea{min-height:108px;resize:vertical}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .table-wrap{overflow:auto}
+    table{width:100%;border-collapse:collapse;min-width:980px}
+    th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#5b6872;text-align:left;border-bottom:1px solid var(--line);padding:10px 8px}
+    td{border-bottom:1px solid #edf1f2;padding:8px;vertical-align:middle}
+    td input{min-height:36px;padding:7px 8px}
+    .money,.number{text-align:right}
+    .delete{width:34px;height:34px;border:1px solid #f1c2b1;background:#fff6f1;color:#a8471e;border-radius:8px;font-weight:900}
+    .total{font-size:40px;font-weight:950;color:var(--orange);line-height:1.05;margin-bottom:14px}
+    .totals-list{display:grid;gap:8px;margin-bottom:14px}
+    .totals-list div{display:flex;justify-content:space-between;border-bottom:1px solid #edf1f2;padding-bottom:7px;color:#53616b}
+    .totals-list strong{color:var(--ink)}
+    .ai-review{border:1px solid #f0c6a9;background:#fff7f1;border-radius:8px;padding:13px;margin-bottom:12px;color:#6f442b}
+    .ai-review p{margin:6px 0 0}
+    .library{margin-top:16px}
+    .library-controls{display:grid;grid-template-columns:220px minmax(260px,1fr);gap:12px;margin-bottom:12px}
+    .library-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+    .library-item{border:1px solid var(--line);border-radius:8px;padding:14px;background:#fff;display:grid;gap:10px}
+    .library-item h3{font-size:16px}
+    .library-item p{margin:0;color:var(--muted);font-size:13px}
+    .library-meta{display:grid;grid-template-columns:1fr 1fr;gap:7px;font-size:13px}
+    .library-meta span{background:#f6f7f5;border:1px solid #edf1f2;border-radius:7px;padding:7px}
+    .source-note{border:1px solid #f0c6a9;background:#fff7f1;color:#6f442b;border-radius:8px;padding:12px;margin-bottom:14px}
+    .outputs{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+    pre{white-space:pre-wrap;margin:0;color:#34424c;font-family:Consolas,ui-monospace,monospace;font-size:14px}
+    .file-list strong{display:block;margin:12px 0 6px}
+    .file-row{display:flex;gap:8px;align-items:center;justify-content:space-between;border-bottom:1px solid #edf1f2;padding:7px 0}
+    .file-row button{width:auto;min-height:30px}
+    @media(max-width:1120px){.workspace,.outputs{grid-template-columns:1fr}.library-list{grid-template-columns:1fr 1fr}.hero{display:grid}}
+    @media(max-width:700px){main{padding:12px}.topbar{padding:10px 12px}.topbar .button{display:none}.two-col,.library-controls,.library-list{grid-template-columns:1fr}}
+  </style>
 </head>
-
 <body>
-
-<div class="wrap">
-
-<div class="top">
-
-<div>
-<h1 id="project-name">Project Workspace</h1>
-<p id="project-client"></p>
-</div>
-
-<a href="/projects.html" class="button">
-Back To Projects
-</a>
-
-</div>
-
-<div class="card">
-
-<h2>Project Overview</h2>
-
-<div class="grid">
-
-<div>
-<label>Project Status</label>
-<select id="projectStatus">
-<option value="Estimating">Estimating</option>
-<option value="Bid Submitted">Bid Submitted</option>
-<option value="Awarded">Awarded</option>
-<option value="Lost">Lost</option>
-</select>
-</div>
-
-<div>
-<label>Bid Due Date</label>
-<input type="date" id="bidDueDate">
-</div>
-
-</div>
-
-<div class="grid">
-
-<div>
-<label>Estimator</label>
-<input id="estimator">
-</div>
-
-<div>
-<label>Estimated Value ($)</label>
-<input type="number" id="projectValue">
-</div>
-
-<div>
-<label>Win Probability (%)</label>
-<input type="number" id="winProbability">
-</div>
-
-</div>
-
-<br>
-
-<input id="projectNotes"
-placeholder="Project notes, scope, bid strategy, assumptions">
-
-</div>
-
-<div class="grid">
-
-<div class="card">
-
-<h2>Documents</h2>
-
-<select id="fileCategory">
-  <option value="plans">Plans</option>
-  <option value="specifications">Specifications</option>
-  <option value="addenda">Addenda</option>
-  <option value="quotes">Quotes</option>
-</select>
-
-<input id="fileInput" type="file">
-<button id="uploadBtn" class="button">Upload File</button>
-<div id="uploadStatus" style="margin-top:10px;color:green;font-weight:bold;"></div>
-
-<div id="fileList" style="margin-top:15px;"></div>
-
-</div>
-
-<div class="card">
-
-<h2>AI Actions</h2>
-
-<button id="analyzeBtn" class="button">
-Analyze Documents
-</button>
-
-<br><br>
-
-<button id="estimateBtn" class="button">
-Generate Estimate
-</button>
-
-<br><br>
-
-<button id="rfiBtn" class="button">
-Generate RFIs
-</button>
-
-<br><br>
-
-<button id="proposalBtn" class="button">
-Create Proposal
-</button>
-
-</div>
-
-</div>
-
-<div class="card">
-
-<h2>Estimate Builder</h2>
-
-<textarea id="estimateBox" placeholder="Estimate output will appear here"></textarea>
-
-</div>
-
-<div class="card">
-
-<h2>RFIs</h2>
-
-<textarea id="rfiBox" placeholder="Generated RFIs"></textarea>
-
-</div>
-
-<div class="card">
-
-<h2>Proposal</h2>
-
-<textarea id="proposalBox" placeholder="Proposal draft"></textarea>
-
-</div>
-
-</div>
-
-<script type="module">
-
-import { supabase } from "/supabase-client.js";
-
-const params = new URLSearchParams(window.location.search);
-
-const projectId = params.get("id");
-let currentProject = null;
-
-if(projectId){
-
-const { data } = await supabase
-.from("projects")
-.select("*")
-.eq("id", projectId)
-.single();
-
-if(data){
-
-currentProject = data;
-
-document.getElementById("project-name").innerText =
-(data.job_number ? "JOB " + data.job_number + " | " : "") +
-(data.estimate_number ? data.estimate_number + " - " : "") +
-data.name;
-
-document.getElementById("project-client").innerText =
-"Client: " + (data.client_name || "");
-
-}
-}
-
-async function loadWorkspace(){
-
-const { data } = await supabase
-  .from("project_workspace")
-  .select("*")
-  .eq("project_id", projectId)
-  .maybeSingle();
-
-if(!data){
-
-return;
-}
-
-document.getElementById("projectStatus").value =
-data.project_status || currentProject?.status || "Estimating";
-
-document.getElementById("bidDueDate").value =
-data.bid_due_date || "";
-
-document.getElementById("estimator").value =
-data.estimator || "";
-
-document.getElementById("projectValue").value =
-data.project_value || "";
-
-document.getElementById("winProbability").value =
-data.win_probability || "";  
-  
-document.getElementById("projectNotes").value =
-data.notes || "";
-
-document.getElementById("estimateBox").value =
-data.estimate || "";
-
-document.getElementById("rfiBox").value =
-data.rfis || "";
-
-document.getElementById("proposalBox").value =
-data.proposal || "";
-
-}
-
-async function saveWorkspace(){
-if(
-document.getElementById("projectStatus").value === "Awarded" &&
-currentProject &&
-!currentProject.job_number
-){
-
-const { data: nextJob, error: jobError } = await supabase.rpc(
-"get_next_job_number",
-{
-org_id: currentProject.organization_id
-}
-);
-
-if(jobError){
-alert("Job number error: " + jobError.message);
-return;
-}
-
-currentProject.job_number = nextJob;
-currentProject.status = "Awarded";
-
-const { error: updateError } = await supabase
-.from("projects")
-.update({
-job_number: nextJob,
-awarded_at: new Date().toISOString(),
-status: "Awarded"
-})
-.eq("id", projectId);
-
-if(updateError){
-alert("Project update error: " + updateError.message);
-return;
-}
-
-}
-const payload = {
-project_id: projectId,
-
-project_status:
-document.getElementById("projectStatus").value,
-
-bid_due_date:
-document.getElementById("bidDueDate").value || null,
-
-estimator:
-document.getElementById("estimator").value,
-
-project_value:
-document.getElementById("projectValue").value,
-
-win_probability:
-document.getElementById("winProbability").value,
-
-notes:
-document.getElementById("projectNotes").value,
-
-estimate:
-document.getElementById("estimateBox").value,
-
-rfis:
-document.getElementById("rfiBox").value,
-
-proposal:
-document.getElementById("proposalBox").value
-};
-
-const { error: workspaceError } = await supabase
-.from("project_workspace")
-.upsert(payload, {
-onConflict: "project_id"
-});
-
-if(workspaceError){
-alert("Workspace save error: " + workspaceError.message);
-return;
-}
-
-  await supabase
-.from("projects")
-.update({
-status: document.getElementById("projectStatus").value,
-project_value: Number(
-document.getElementById("projectValue").value || 0
-)
-})
-.eq("id", projectId);
-  
-}
-
-document.getElementById("projectStatus")
-.addEventListener("change", saveWorkspace);
-
-document.getElementById("bidDueDate")
-.addEventListener("change", saveWorkspace);
-
-document.getElementById("estimator")
-.addEventListener("change", saveWorkspace);
-
-document.getElementById("projectValue")
-.addEventListener("change", saveWorkspace);
-
-document.getElementById("winProbability")
-.addEventListener("change", saveWorkspace);
-  
-document.getElementById("projectNotes")
-.addEventListener("change", saveWorkspace);
-
-document.getElementById("estimateBox")
-.addEventListener("change", saveWorkspace);
-
-document.getElementById("rfiBox")
-.addEventListener("change", saveWorkspace);
-
-document.getElementById("proposalBox")
-.addEventListener("change", saveWorkspace);
-
-document.getElementById("estimateBtn")
-.addEventListener("click", async () => {
-
-const notes =
-document.getElementById("projectNotes").value;
-
-document.getElementById("estimateBox").value =
-"Generating estimate...";
-
-try {
-
-const response = await fetch("/api/generate-estimate", {
-method: "POST",
-headers: {
-"Content-Type": "application/json"
-},
-body: JSON.stringify({
-projectName: currentProject?.name || "",
-clientName: currentProject?.client_name || "",
-notes: notes
-})
-});
-
-const result = await response.json();
-
-console.log("AI estimate result:", result);
-
-if(result.error){
-document.getElementById("estimateBox").value =
-"AI error: " + result.error;
-return;
-}
-
-document.getElementById("estimateBox").value =
-result.estimate || JSON.stringify(result, null, 2) || "No estimate generated.";
-
-await saveWorkspace();
-
-}
-catch(error){
-
-document.getElementById("estimateBox").value =
-"Error generating estimate.";
-
-console.error(error);
-
-}
-
-});
-
-document.getElementById("rfiBtn")
-.addEventListener("click", async () => {
-
-const notes =
-document.getElementById("projectNotes").value;
-
-document.getElementById("rfiBox").value =
-
-`RFI #1
-
-Project:
-${document.getElementById("project-name").innerText}
-
-Question:
-Please clarify scope requirements related to:
-
-${notes}
-
-Requested Response:
-Provide direction and intent.
-`;
-
-await saveWorkspace();
-
-});
-
-
-document.getElementById("proposalBtn")
-.addEventListener("click", async () => {
-
-document.getElementById("proposalBox").value =
-
-`GROUNDUP ESTIMATING PRO
-
-We are pleased to provide this proposal
-for the referenced project.
-
-Scope:
-Work will be completed in accordance
-with the plans, specifications, and
-contract requirements.
-
-Pricing:
-See attached estimate.
-
-Thank you for the opportunity to bid.
-
-Sincerely,
-
-GroundUp Estimating Pro
-`;
-
-await saveWorkspace();
-
-});
-
-
-document.getElementById("analyzeBtn")
-.addEventListener("click", async () => {
-
-document.getElementById("estimateBox").value =
-"Analyzing project information...";
-
-const notes =
-document.getElementById("projectNotes").value;
-
-try {
-
-const response = await fetch("/api/generate-estimate", {
-method: "POST",
-headers: {
-"Content-Type": "application/json"
-},
-body: JSON.stringify({
-projectName: currentProject?.name || "",
-clientName: currentProject?.client_name || "",
-notes: `
-Analyze this project and provide:
-
-1. Scope Summary
-2. Key Electrical Systems
-3. Major Risks
-4. Bid Strategy
-5. Top 10 RFIs
-
-Project Notes:
-
-${notes}
-`
-})
-});
-
-const result = await response.json();
-
-document.getElementById("estimateBox").value =
-result.estimate || "Analysis complete.";
-
-await saveWorkspace();
-
-}
-catch(error){
-
-document.getElementById("estimateBox").value =
-"Analysis failed.";
-
-console.error(error);
-
-}
-
-});
-
-async function uploadFile(){
-
-const uploadBtn = document.getElementById("uploadBtn");
-const file = document.getElementById("fileInput").files[0];
-const category = document.getElementById("fileCategory").value;
-
-if(!file){
-alert("Choose a file first.");
-return;
-}
-
-uploadBtn.disabled = true;
-uploadBtn.innerText = "Uploading...";
-
-const cleanName = file.name.replaceAll("/", "-");
-const filePath = projectId + "/" + category + "/" + cleanName;
-
-const { error } = await supabase.storage
-.from("project-files")
-.upload(filePath, file, {
-upsert: true
-});
-
-uploadBtn.disabled = false;
-uploadBtn.innerText = "Upload File";
-
-if(error){
-alert("Upload failed: " + error.message);
-return;
-}
-
-document.getElementById("uploadStatus").innerText =
-"✓ Uploaded to " + category;
-
-setTimeout(() => {
-document.getElementById("uploadStatus").innerText = "";
-}, 3000);
-document.getElementById("fileInput").value = "";
-loadFiles();
-
-}
-
-async function loadFiles(){
-
-const categories = ["plans", "specifications", "addenda", "quotes"];
-const list = document.getElementById("fileList");
-list.innerHTML = "";
-
-for (const category of categories) {
-
-const heading = document.createElement("strong");
-heading.innerText = category.toUpperCase();
-list.appendChild(heading);
-
-const { data, error } = await supabase.storage
-.from("project-files")
-.list(projectId + "/" + category);
-
-if(error || !data || data.length === 0){
-const empty = document.createElement("div");
-empty.innerText = "No files";
-empty.style.marginBottom = "10px";
-list.appendChild(empty);
-continue;
-}
-
-data.forEach(file => {
-const div = document.createElement("div");
-
-const filePath = projectId + "/" + category + "/" + file.name;
-
-const openBtn = document.createElement("button");
-openBtn.innerText = "Open";
-openBtn.style.marginLeft = "8px";
-
-openBtn.onclick = async () => {
-  const { data } = await supabase.storage
-    .from("project-files")
-    .createSignedUrl(filePath, 60);
-
-  if(data?.signedUrl){
-    window.open(data.signedUrl, "_blank");
-  }
-};
-
-div.innerText = file.name + " ";
-
-div.appendChild(openBtn);
-
-const deleteBtn = document.createElement("button");
-deleteBtn.innerText = "Delete";
-deleteBtn.style.marginLeft = "8px";
-
-deleteBtn.onclick = async () => {
-
-if(!confirm("Delete this file?")) return;
-
-await supabase.storage
-.from("project-files")
-.remove([filePath]);
-
-loadFiles();
-
-};
-
-div.appendChild(deleteBtn);
-
-list.appendChild(div);
-
-const spacer = document.createElement("div");
-spacer.style.marginBottom = "10px";
-list.appendChild(spacer);
-
-});
-
-}
-
-}
-
-document.getElementById("uploadBtn")
-.addEventListener("click", uploadFile);
-
-loadFiles();
-  
-loadWorkspace();
-  
-</script>
-
+  <header class="topbar">
+    <div class="brand">
+      <div class="mark">G</div>
+      <div><strong>GroundUp Estimating Pro</strong><span id="project-client">Project workspace</span></div>
+    </div>
+    <div>
+      <a class="button" href="/projects.html">Back To Projects</a>
+      <button class="button dark" id="saveBtn" type="button">Save Workspace</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div>
+        <h1 id="project-name">Project Workspace</h1>
+        <p>Build the estimate from real line items and use AI to review, draft RFIs, and create proposal language.</p>
+      </div>
+      <span class="badge" id="saveStatus">Not saved</span>
+    </section>
+
+    <section class="workspace">
+      <aside class="panel">
+        <div class="panel-title"><h2>Bid Setup</h2><span class="badge" id="statusBadge">Draft</span></div>
+        <label>Project Status
+          <select id="projectStatus">
+            <option value="Estimating">Estimating</option>
+            <option value="Bid Submitted">Bid Submitted</option>
+            <option value="Awarded">Awarded</option>
+            <option value="Lost">Lost</option>
+          </select>
+        </label>
+        <label>Bid Due Date<input type="date" id="bidDueDate"></label>
+        <label>Estimator<input id="estimator"></label>
+        <label>Primary Trade
+          <select id="tradeType">
+            <option>Electrical</option>
+            <option>Utility</option>
+            <option>Civil</option>
+            <option>General Contractor</option>
+          </select>
+        </label>
+        <div class="two-col">
+          <label>Labor Rate<input id="laborRate" type="number" min="0" value="92"></label>
+          <label>Markup %<input id="markup" type="number" min="0" value="15"></label>
+        </div>
+        <div class="two-col">
+          <label>Contingency %<input id="contingency" type="number" min="0" value="6"></label>
+          <label>Tax %<input id="tax" type="number" min="0" value="8.25" step="0.25"></label>
+        </div>
+        <label>Bid Strategy
+          <select id="strategy">
+            <option value="lean">Lean</option>
+            <option value="balanced" selected>Balanced</option>
+            <option value="premium">Premium</option>
+          </select>
+        </label>
+        <label>Estimator Notes<textarea id="projectNotes"></textarea></label>
+
+        <div class="panel-title"><h2>Documents</h2></div>
+        <label>Category
+          <select id="fileCategory">
+            <option value="plans">Plans</option>
+            <option value="specifications">Specifications</option>
+            <option value="addenda">Addenda</option>
+            <option value="quotes">Quotes</option>
+          </select>
+        </label>
+        <input id="fileInput" type="file">
+        <button id="uploadBtn" class="button orange full" type="button">Upload File</button>
+        <div id="uploadStatus" style="margin-top:10px;color:var(--green);font-weight:bold;"></div>
+        <div id="fileList" class="file-list"></div>
+      </aside>
+
+      <section class="panel">
+        <div class="panel-title">
+          <div><h2>Estimate Builder</h2><p>Editable line items with live labor, material, equipment/subs, tax, contingency, and markup.</p></div>
+          <button class="button orange" id="addLineBtn" type="button">Add Line</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Scope Item</th><th>Trade</th><th>Unit</th><th>Qty</th><th>Labor Hrs</th><th>Material</th><th>Equip/Subs</th><th>Total</th><th></th></tr>
+            </thead>
+            <tbody id="lineItems"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <aside class="panel">
+        <div class="panel-title"><h2>Bid Total</h2><span class="badge" id="strategyBadge">Balanced</span></div>
+        <div class="total" id="grandTotal">$0</div>
+        <div class="totals-list" id="totalsList"></div>
+        <div class="ai-review"><strong>AI Review</strong><p id="aiReview">Use the buttons below to review this calculated estimate.</p></div>
+        <button class="button dark full" id="analyzeBtn" type="button">Analyze Scope</button>
+        <button class="button dark full" id="estimateBtn" type="button">Review Estimate</button>
+        <button class="button full" id="rfiBtn" type="button">Generate RFIs</button>
+        <button class="button full" id="proposalBtn" type="button">Create Proposal</button>
+      </aside>
+    </section>
+
+    <section class="library panel">
+      <div class="panel-title">
+        <div><h2>Cost Library + Assemblies</h2><p>Starter electrical, utility, and civil assemblies. Add them to the estimate, then override anything.</p></div>
+        <span class="badge">Seed data</span>
+      </div>
+      <div class="source-note"><strong>Data stance:</strong> Seed units are startup assumptions, not copied from proprietary cost books. Production use should improve these from contractor history, vendor quotes, BLS wage data, DOT bid histories, and licensed databases if you add them.</div>
+      <div class="library-controls">
+        <label>Filter Trade
+          <select id="libraryTrade">
+            <option value="all">All Trades</option>
+            <option>Electrical</option>
+            <option>Utility</option>
+            <option>Civil</option>
+          </select>
+        </label>
+        <label>Search Library<input id="librarySearch" placeholder="conduit, trench, pull box, restoration..."></label>
+      </div>
+      <div class="library-list" id="libraryList"></div>
+    </section>
+
+    <section class="outputs">
+      <article class="panel"><div class="panel-title"><h2>Estimate Review</h2></div><pre id="estimateBox"></pre></article>
+      <article class="panel" id="rfi"><div class="panel-title"><h2>RFIs</h2></div><pre id="rfiBox"></pre></article>
+      <article class="panel" id="proposal"><div class="panel-title"><h2>Proposal</h2></div><pre id="proposalBox"></pre></article>
+      <article class="panel"><div class="panel-title"><h2>Implementation Notes</h2></div><pre>Next database step: add cost_items, assemblies, assembly_items, regional_labor_rates, material_indexes, vendor_quotes, and contractor_cost_overrides. Then replace these seed browser items with Supabase data.</pre></article>
+    </section>
+  </main>
+
+  <script type="module">
+    import { supabase } from "/supabase-client.js";
+
+    const params = new URLSearchParams(window.location.search);
+    const projectId = params.get("id");
+    let currentProject = null;
+    let workspaceLoaded = false;
+
+    const costLibrary = [
+      {trade:"Electrical",scope:"EMT conduit 3/4 in exposed",unit:"LF",qty:100,laborHours:8,material:260,other:0,source:"Seed assumption",note:"Includes layout, anchors, bends, couplings. Adjust for height/congestion."},
+      {trade:"Electrical",scope:"PVC conduit 2 in underground",unit:"LF",qty:100,laborHours:10,material:420,other:0,source:"Seed assumption",note:"Conduit only. Trenching/backfill separate."},
+      {trade:"Electrical",scope:"THHN copper feeder pull #2",unit:"LF",qty:500,laborHours:18,material:1850,other:0,source:"Seed assumption",note:"Adjust for conductor count, bends, distance, crew size."},
+      {trade:"Electrical",scope:"Panelboard install and terminate",unit:"EA",qty:1,laborHours:24,material:2800,other:0,source:"Seed assumption",note:"Small/medium panel. Gear price must be vendor-quoted."},
+      {trade:"Electrical",scope:"Transformer pad mount coordination",unit:"EA",qty:1,laborHours:18,material:1200,other:3500,source:"Seed assumption",note:"Placeholder for coordination, terminations, and vendor/sub costs."},
+      {trade:"Electrical",scope:"Light pole base rough-in",unit:"EA",qty:1,laborHours:6,material:380,other:450,source:"Seed assumption",note:"Electrical portion only. Concrete/augering may be civil/sub."},
+      {trade:"Utility",scope:"Trench excavation 24 in wide",unit:"LF",qty:100,laborHours:14,material:0,other:1800,source:"Seed + DOT import target",note:"Use state DOT bid histories for regional excavation validation."},
+      {trade:"Utility",scope:"Sand bedding and warning tape",unit:"LF",qty:100,laborHours:5,material:620,other:250,source:"Seed assumption",note:"Adjust bedding depth, haul distance, compaction requirements."},
+      {trade:"Utility",scope:"Precast pull box install",unit:"EA",qty:1,laborHours:8,material:950,other:450,source:"Seed assumption",note:"Box size and traffic rating drive cost."},
+      {trade:"Utility",scope:"Duct bank concrete encasement",unit:"LF",qty:100,laborHours:18,material:2200,other:900,source:"Seed assumption",note:"Rebar, spacers, inspection, and pump/truck access vary heavily."},
+      {trade:"Civil",scope:"Asphalt sawcut and patch",unit:"SF",qty:100,laborHours:6,material:780,other:950,source:"Seed + DOT import target",note:"Best validated from local DOT/city bid tabs."},
+      {trade:"Civil",scope:"Concrete sidewalk remove and replace",unit:"SF",qty:100,laborHours:10,material:900,other:650,source:"Seed + DOT import target",note:"Adjust for demo, haul-off, thickness, and reinforcement."},
+      {trade:"Civil",scope:"Traffic control allowance",unit:"DAY",qty:1,laborHours:4,material:0,other:1200,source:"Seed assumption",note:"Highly local. Should become vendor/sub quote library item."},
+      {trade:"Civil",scope:"Mobilization / demobilization",unit:"LS",qty:1,laborHours:8,material:0,other:1500,source:"Seed assumption",note:"Scale by project duration, crew size, and equipment moves."}
+    ];
+
+    let estimateLines = [
+      {scope:"Underground conduit bank",trade:"Electrical",unit:"LF",qty:480,laborHours:86,material:42800,other:5200},
+      {scope:"Service gear and terminations",trade:"Electrical",unit:"LS",qty:1,laborHours:74,material:61200,other:12400},
+      {scope:"Branch feeders and wire pull",trade:"Electrical",unit:"LF",qty:2900,laborHours:112,material:37750,other:3300}
+    ];
+
+    const money = new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maximumFractionDigits:0});
+    const el = id => document.getElementById(id);
+    const numberValue = id => Number(el(id).value || 0);
+    const textValue = id => el(id).value.trim();
+
+    renderAll();
+    generateLocalReview();
+
+    if (!projectId) {
+      el("project-name").innerText = "Missing project id";
+    } else {
+      await loadProject();
+      await loadWorkspace();
+      await loadFiles();
+    }
+
+    async function loadProject(){
+      const { data, error } = await supabase.from("projects").select("*").eq("id", projectId).single();
+      if(error){
+        el("project-name").innerText = "Project not found";
+        el("project-client").innerText = error.message;
+        return;
+      }
+      currentProject = data;
+      el("project-name").innerText = (data.job_number ? "JOB " + data.job_number + " | " : "") + (data.estimate_number ? data.estimate_number + " - " : "") + data.name;
+      el("project-client").innerText = "Client: " + (data.client_name || "");
+      el("projectStatus").value = data.status === "draft" ? "Estimating" : (data.status || "Estimating");
+    }
+
+    async function loadWorkspace(){
+      const { data } = await supabase.from("project_workspace").select("*").eq("project_id", projectId).maybeSingle();
+      if(data){
+        el("projectStatus").value = data.project_status || currentProject?.status || "Estimating";
+        el("bidDueDate").value = data.bid_due_date || "";
+        el("estimator").value = data.estimator || "";
+        el("projectNotes").value = data.notes || "";
+        el("estimateBox").innerText = data.estimate || "";
+        el("rfiBox").innerText = data.rfis || "";
+        el("proposalBox").innerText = data.proposal || "";
+        const saved = parseEstimateJson(data.estimate_json);
+        if(saved?.settings){
+          el("tradeType").value = saved.settings.tradeType || "Electrical";
+          el("laborRate").value = saved.settings.laborRate ?? 92;
+          el("markup").value = saved.settings.markup ?? 15;
+          el("contingency").value = saved.settings.contingency ?? 6;
+          el("tax").value = saved.settings.tax ?? 8.25;
+          el("strategy").value = saved.settings.strategy || "balanced";
+        }
+        if(saved?.lines?.length) estimateLines = saved.lines;
+      } else {
+        el("projectNotes").value = "Include night work premium, verify transformer lead time, and clarify trench bedding detail.";
+      }
+      workspaceLoaded = true;
+      renderAll();
+      generateLocalReview();
+    }
+
+    function parseEstimateJson(value){
+      if(!value) return null;
+      if(typeof value === "object") return value;
+      try { return JSON.parse(value); } catch { return null; }
+    }
+
+    function totals(){
+      const laborRate = numberValue("laborRate");
+      const subtotal = estimateLines.reduce((sum,line)=>sum + (line.laborHours * laborRate) + line.material + line.other,0);
+      const materialBase = estimateLines.reduce((sum,line)=>sum + line.material,0);
+      const tax = materialBase * (numberValue("tax") / 100);
+      const contingency = subtotal * (numberValue("contingency") / 100);
+      const markup = (subtotal + tax + contingency) * (numberValue("markup") / 100);
+      const grand = subtotal + tax + contingency + markup;
+      const laborHours = estimateLines.reduce((sum,line)=>sum + line.laborHours,0);
+      return { subtotal, tax, contingency, markup, grand, laborHours, materialBase };
+    }
+
+    function renderAll(){
+      renderLines();
+      renderTotals();
+      renderLibrary();
+    }
+
+    function renderLines(){
+      const laborRate = numberValue("laborRate");
+      el("lineItems").innerHTML = estimateLines.map((line,index)=>{
+        const total = line.laborHours * laborRate + line.material + line.other;
+        return `<tr>
+          <td><input data-index="${index}" data-field="scope" value="${escapeHtml(line.scope)}"></td>
+          <td><input data-index="${index}" data-field="trade" value="${escapeHtml(line.trade || textValue("tradeType"))}"></td>
+          <td><input data-index="${index}" data-field="unit" value="${escapeHtml(line.unit)}"></td>
+          <td><input class="number" type="number" data-index="${index}" data-field="qty" value="${line.qty}"></td>
+          <td><input class="number" type="number" data-index="${index}" data-field="laborHours" value="${line.laborHours}"></td>
+          <td><input class="money" type="number" data-index="${index}" data-field="material" value="${line.material}"></td>
+          <td><input class="money" type="number" data-index="${index}" data-field="other" value="${line.other}"></td>
+          <td><strong>${money.format(total)}</strong></td>
+          <td><button class="delete" type="button" data-delete="${index}" title="Delete line">x</button></td>
+        </tr>`;
+      }).join("");
+    }
+
+    function renderTotals(){
+      const t = totals();
+      const strategy = textValue("strategy");
+      el("statusBadge").innerText = el("projectStatus").value;
+      el("strategyBadge").innerText = strategy.charAt(0).toUpperCase() + strategy.slice(1);
+      el("grandTotal").innerText = money.format(t.grand);
+      el("totalsList").innerHTML = `
+        <div><span>Direct subtotal</span><strong>${money.format(t.subtotal)}</strong></div>
+        <div><span>Total labor hours</span><strong>${t.laborHours.toLocaleString()} hrs</strong></div>
+        <div><span>Material tax</span><strong>${money.format(t.tax)}</strong></div>
+        <div><span>Contingency</span><strong>${money.format(t.contingency)}</strong></div>
+        <div><span>Markup</span><strong>${money.format(t.markup)}</strong></div>`;
+    }
+
+    function renderLibrary(){
+      const trade = el("libraryTrade").value;
+      const search = el("librarySearch").value.toLowerCase();
+      const rows = costLibrary.filter(item => (trade === "all" || item.trade === trade) && (item.scope.toLowerCase().includes(search) || item.note.toLowerCase().includes(search)));
+      el("libraryList").innerHTML = rows.map((item,index)=>{
+        const originalIndex = costLibrary.indexOf(item);
+        return `<article class="library-item">
+          <span class="badge">${item.trade}</span>
+          <h3>${escapeHtml(item.scope)}</h3>
+          <p>${escapeHtml(item.note)}</p>
+          <div class="library-meta">
+            <span><strong>Unit:</strong> ${item.unit}</span>
+            <span><strong>Base qty:</strong> ${item.qty}</span>
+            <span><strong>Labor:</strong> ${item.laborHours} hrs</span>
+            <span><strong>Mat/Sub:</strong> ${money.format(item.material + item.other)}</span>
+          </div>
+          <p><strong>Source:</strong> ${item.source}</p>
+          <button class="button orange" type="button" data-library-add="${originalIndex}">Add Assembly</button>
+        </article>`;
+      }).join("") || "<p>No matching library items.</p>";
+    }
+
+    function escapeHtml(value){
+      return String(value ?? "").replaceAll("&","&amp;").replaceAll('"',"&quot;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+    }
+
+    function estimatePayload(){
+      return {
+        settings:{
+          tradeType:textValue("tradeType"),
+          laborRate:numberValue("laborRate"),
+          markup:numberValue("markup"),
+          contingency:numberValue("contingency"),
+          tax:numberValue("tax"),
+          strategy:textValue("strategy")
+        },
+        totals:totals(),
+        lines:estimateLines
+      };
+    }
+
+    function generateLocalReview(){
+      const t = totals();
+      const materialShare = t.subtotal ? Math.round((t.materialBase / t.subtotal) * 100) : 0;
+      el("aiReview").innerText = `${textValue("tradeType")} estimate: ${t.laborHours.toLocaleString()} labor hours, ${materialShare}% material/sub exposure before markup. Use vendor quotes for gear, carry escalation language, and confirm trench/restoration scope before bid day.`;
+    }
+
+    async function saveWorkspace(){
+      if(!workspaceLoaded || !projectId) return;
+      el("saveStatus").innerText = "Saving...";
+      const payload = {
+        project_id: projectId,
+        project_status: el("projectStatus").value,
+        bid_due_date: el("bidDueDate").value || null,
+        estimator: el("estimator").value,
+        project_value: Math.round(totals().grand),
+        win_probability: null,
+        notes: el("projectNotes").value,
+        estimate: el("estimateBox").innerText,
+        rfis: el("rfiBox").innerText,
+        proposal: el("proposalBox").innerText,
+        estimate_json: estimatePayload()
+      };
+      const { error } = await supabase.from("project_workspace").upsert(payload,{onConflict:"project_id"});
+      if(error){
+        el("saveStatus").innerText = "Save failed";
+        alert("Workspace save error: " + error.message);
+        return;
+      }
+      await supabase.from("projects").update({status:payload.project_status,project_value:payload.project_value}).eq("id",projectId);
+      el("saveStatus").innerText = "Saved";
+      setTimeout(()=>el("saveStatus").innerText = "Ready",1800);
+    }
+
+    async function runAi(mode){
+      const target = mode === "rfi" ? el("rfiBox") : mode === "proposal" ? el("proposalBox") : el("estimateBox");
+      target.innerText = "Generating...";
+      const response = await fetch("/api/generate-estimate",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          mode,
+          projectName:currentProject?.name || "",
+          clientName:currentProject?.client_name || "",
+          notes:el("projectNotes").value,
+          estimate:estimatePayload()
+        })
+      });
+      const result = await response.json();
+      target.innerText = result.estimate || result.output || result.error || "No output generated.";
+      await saveWorkspace();
+    }
+
+    async function uploadFile(){
+      const uploadBtn = el("uploadBtn");
+      const file = el("fileInput").files[0];
+      const category = el("fileCategory").value;
+      if(!file){ alert("Choose a file first."); return; }
+      uploadBtn.disabled = true;
+      uploadBtn.innerText = "Uploading...";
+      const cleanName = file.name.replaceAll("/","-");
+      const filePath = projectId + "/" + category + "/" + cleanName;
+      const { error } = await supabase.storage.from("project-files").upload(filePath,file,{upsert:true});
+      uploadBtn.disabled = false;
+      uploadBtn.innerText = "Upload File";
+      if(error){ alert("Upload failed: " + error.message); return; }
+      el("uploadStatus").innerText = "Uploaded to " + category;
+      setTimeout(()=>el("uploadStatus").innerText = "",3000);
+      el("fileInput").value = "";
+      loadFiles();
+    }
+
+    async function loadFiles(){
+      const categories = ["plans","specifications","addenda","quotes"];
+      const list = el("fileList");
+      list.innerHTML = "";
+      for(const category of categories){
+        const heading = document.createElement("strong");
+        heading.innerText = category.toUpperCase();
+        list.appendChild(heading);
+        const { data, error } = await supabase.storage.from("project-files").list(projectId + "/" + category);
+        if(error || !data || data.length === 0){
+          const empty = document.createElement("div");
+          empty.innerText = "No files";
+          list.appendChild(empty);
+          continue;
+        }
+        data.forEach(file=>{
+          const filePath = projectId + "/" + category + "/" + file.name;
+          const row = document.createElement("div");
+          row.className = "file-row";
+          row.append(file.name + " ");
+          const actions = document.createElement("span");
+          const openBtn = document.createElement("button");
+          openBtn.innerText = "Open";
+          openBtn.onclick = async ()=>{
+            const { data } = await supabase.storage.from("project-files").createSignedUrl(filePath,60);
+            if(data?.signedUrl) window.open(data.signedUrl,"_blank");
+          };
+          const deleteBtn = document.createElement("button");
+          deleteBtn.innerText = "Delete";
+          deleteBtn.onclick = async ()=>{
+            if(!confirm("Delete this file?")) return;
+            await supabase.storage.from("project-files").remove([filePath]);
+            loadFiles();
+          };
+          actions.append(openBtn,deleteBtn);
+          row.appendChild(actions);
+          list.appendChild(row);
+        });
+      }
+    }
+
+    el("lineItems").addEventListener("input",event=>{
+      const input = event.target;
+      const index = Number(input.dataset.index);
+      const field = input.dataset.field;
+      if(!field) return;
+      estimateLines[index][field] = ["qty","laborHours","material","other"].includes(field) ? Number(input.value || 0) : input.value;
+      renderTotals();
+      generateLocalReview();
+    });
+    el("lineItems").addEventListener("click",event=>{
+      const index = event.target.dataset.delete;
+      if(index === undefined) return;
+      estimateLines.splice(Number(index),1);
+      renderAll();
+      generateLocalReview();
+    });
+    el("addLineBtn").addEventListener("click",()=>{
+      estimateLines.push({scope:"New scope item",trade:textValue("tradeType"),unit:"LS",qty:1,laborHours:0,material:0,other:0});
+      renderAll();
+    });
+    el("libraryList").addEventListener("click",event=>{
+      const index = event.target.dataset.libraryAdd;
+      if(index === undefined) return;
+      const item = costLibrary[Number(index)];
+      estimateLines.push({scope:item.scope,trade:item.trade,unit:item.unit,qty:item.qty,laborHours:item.laborHours,material:item.material,other:item.other});
+      renderAll();
+      generateLocalReview();
+      document.querySelector(".workspace").scrollIntoView({behavior:"smooth",block:"start"});
+    });
+    ["projectStatus","bidDueDate","estimator","tradeType","laborRate","markup","contingency","tax","strategy","projectNotes"].forEach(id=>{
+      el(id).addEventListener("change",()=>{ renderTotals(); generateLocalReview(); saveWorkspace(); });
+    });
+    el("libraryTrade").addEventListener("input",renderLibrary);
+    el("librarySearch").addEventListener("input",renderLibrary);
+    el("saveBtn").addEventListener("click",saveWorkspace);
+    el("uploadBtn").addEventListener("click",uploadFile);
+    el("analyzeBtn").addEventListener("click",()=>runAi("analysis"));
+    el("estimateBtn").addEventListener("click",()=>runAi("review"));
+    el("rfiBtn").addEventListener("click",()=>runAi("rfi"));
+    el("proposalBtn").addEventListener("click",()=>runAi("proposal"));
+  </script>
 </body>
 </html>
