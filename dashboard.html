@@ -65,8 +65,7 @@
     if (!data.user) {
       window.location.href = "/login.html";
     } else {
-      document.getElementById("userInfo").textContent =
-        `Signed in as ${data.user.email}`;
+      window.location.href = "/projects.html";
     }
 
     document.getElementById("logoutBtn").addEventListener("click", async () => {
