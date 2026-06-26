@@ -53,7 +53,7 @@
     .library-meta span{background:#f6f7f5;border:1px solid #edf1f2;border-radius:7px;padding:7px}
     .source-note{border:1px solid #f0c6a9;background:#fff7f1;color:#6f442b;border-radius:8px;padding:12px;margin-bottom:14px}
     .outputs{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
-    pre{white-space:pre-wrap;margin:0;color:#34424c;font-family:Consolas,ui-monospace,monospace;font-size:14px}
+    pre{white-space:pre-wrap;margin:0;color:#34424c;font-family:Consolas,ui-monospace,monospace;font-size:14px;min-height:120px;background:#f9fbfb;border:1px solid #edf1f2;border-radius:8px;padding:12px}
     .file-list strong{display:block;margin:12px 0 6px}
     .file-row{display:flex;gap:8px;align-items:center;justify-content:space-between;border-bottom:1px solid #edf1f2;padding:7px 0}
     .file-row button{width:auto;min-height:30px}
@@ -412,23 +412,28 @@
     async function runAi(mode){
       const target = mode === "rfi" ? el("rfiBox") : mode === "proposal" ? el("proposalBox") : el("estimateBox");
       const panel = mode === "rfi" ? el("rfi") : mode === "proposal" ? el("proposal") : el("estimateReviewPanel");
-      target.innerText = "Generating...";
+      target.innerText = "Generating... If this takes more than 20 seconds, check the Vercel OPENAI_API_KEY setting.";
       panel.scrollIntoView({behavior:"smooth",block:"start"});
-      const response = await fetch("/api/generate-estimate",{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({
-          mode,
-          projectName:currentProject?.name || "",
-          clientName:currentProject?.client_name || "",
-          notes:el("projectNotes").value,
-          estimate:estimatePayload()
-        })
-      });
-      const result = await response.json();
-      target.innerText = result.estimate || result.output || result.error || "No output generated.";
-      await saveWorkspace();
-      panel.scrollIntoView({behavior:"smooth",block:"start"});
+      try {
+        const response = await fetch("/api/generate-estimate",{
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({
+            mode,
+            projectName:currentProject?.name || "",
+            clientName:currentProject?.client_name || "",
+            notes:el("projectNotes").value,
+            estimate:estimatePayload()
+          })
+        });
+        const result = await response.json();
+        target.innerText = result.estimate || result.output || result.error || "No output generated.";
+        await saveWorkspace();
+        panel.scrollIntoView({behavior:"smooth",block:"start"});
+      } catch (error) {
+        target.innerText = "AI request failed. This usually means the Vercel API route or OPENAI_API_KEY is not configured correctly.\n\nError: " + error.message;
+        panel.scrollIntoView({behavior:"smooth",block:"start"});
+      }
     }
 
     async function uploadFile(){
