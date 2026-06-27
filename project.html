@@ -173,6 +173,7 @@
     </section>
 
     <section class="outputs">
+      <article class="panel" id="scopeAnalysisPanel"><div class="panel-title"><h2>Scope Analysis</h2></div><pre id="scopeBox"></pre></article>
       <article class="panel" id="estimateReviewPanel"><div class="panel-title"><h2>Estimate Review</h2></div><pre id="estimateBox"></pre></article>
       <article class="panel" id="rfi"><div class="panel-title"><h2>RFIs</h2></div><pre id="rfiBox"></pre></article>
       <article class="panel" id="proposal"><div class="panel-title"><h2>Proposal</h2></div><pre id="proposalBox"></pre></article>
@@ -272,6 +273,7 @@
         el("rfiBox").innerText = data.rfis || "";
         el("proposalBox").innerText = data.proposal || "";
         const saved = parseEstimateJson(data.estimate_json);
+        el("scopeBox").innerText = saved?.outputs?.scopeAnalysis || "";
         if(saved?.settings){
           el("tradeType").value = saved.settings.tradeType || "Electrical";
           el("laborRate").value = saved.settings.laborRate ?? 92;
@@ -382,7 +384,13 @@
           strategy:textValue("strategy")
         },
         totals:totals(),
-        lines:estimateLines
+        lines:estimateLines,
+        outputs:{
+          scopeAnalysis:el("scopeBox").innerText,
+          estimateReview:el("estimateBox").innerText,
+          rfis:el("rfiBox").innerText,
+          proposal:el("proposalBox").innerText
+        }
       };
     }
 
@@ -420,8 +428,16 @@
     }
 
     async function runAi(mode){
-      const target = mode === "rfi" ? el("rfiBox") : mode === "proposal" ? el("proposalBox") : el("estimateBox");
-      const panel = mode === "rfi" ? el("rfi") : mode === "proposal" ? el("proposal") : el("estimateReviewPanel");
+      const target =
+        mode === "analysis" ? el("scopeBox") :
+        mode === "rfi" ? el("rfiBox") :
+        mode === "proposal" ? el("proposalBox") :
+        el("estimateBox");
+      const panel =
+        mode === "analysis" ? el("scopeAnalysisPanel") :
+        mode === "rfi" ? el("rfi") :
+        mode === "proposal" ? el("proposal") :
+        el("estimateReviewPanel");
       target.innerText = "Generating... If this takes more than 20 seconds, check the Vercel OPENAI_API_KEY setting.";
       panel.scrollIntoView({behavior:"smooth",block:"start"});
       try {
