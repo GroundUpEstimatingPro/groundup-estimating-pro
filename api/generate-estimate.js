@@ -92,16 +92,17 @@ ACCEPTANCE LINE
 
   if (mode === "analysis") {
     return `${base}
-Analyze the project information.
+Analyze scope only. Focus on what work appears included, what work is missing or unclear, and what scope assumptions the estimator should confirm. Do not perform an estimate review.
 
 Return:
-SCOPE SUMMARY
+SCOPE DESCRIPTION
+INCLUDED SCOPE
+EXCLUDED / UNCLEAR SCOPE
 MAJOR COST DRIVERS
 MISSING INFORMATION
 CONSTRUCTABILITY RISKS
 LONG LEAD / MATERIAL RISKS
-TOP RFIs
-BID STRATEGY RECOMMENDATION
+TOP SCOPE RFIs
 `;
   }
 
